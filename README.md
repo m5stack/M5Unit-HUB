@@ -1,48 +1,46 @@
-# Product Name
+# M5Unit - HUB
 
 ## Overview
 
-### SKU:xxx
+Library for UnitHUB using M5UnitUnified.  
 
-Description of the product
+The M5UnitUnified version of the library is located under [src/unit](src/unit).  
+M5UnitUnfied has a unified API and can control multiple units via PaHub, etc.
 
-## Related Link
+### SKU:U040-B
 
-- [Document & Datasheet](https://docs.m5stack.com/en/unit/product_Link)
-
-## Required Libraries:
-
-- [Adafruit_BMP280_Library](https://github.com/adafruit/Required_Libraries_Link)
-
-## License
-
-- [Product Name- MIT](LICENSE)
-
-## Remaining steps(Editorial Staff Look,After following the steps, remember to delete all the content below)
-
-1. Change [clang format check path](./.github/workflows/clang-format-check.yml#L9-L15).
-2. Add License content to [LICENSE](/LICENSE).
-3. Change link on line 78 of [bug-report.yml](./.github/ISSUE_TEMPLATE/bug-report.yml#L78).
-
-```cpp
-Example
-# M5Unit-ENV
-
-## Overview
-
-### SKU:U001 & U001-B & U001-C
-
-Contains M5Stack-**UNIT ENV** series related case programs.ENV is an environmental sensor with integrated SHT30 and QMP6988 internally to detect temperature, humidity, and atmospheric pressure data.
+PaHUB2, is an I2C Expandable Hub, which can expand a single I2C HY2.0-4P interface and connects up to 6 I2C channels. It allows you to mount slave devices with the same I2C address (by polling control the different channels to achieve in-device coexistence). Embedded PCA9548AP-I2C multi-channel switch IC, Save you worries with insufficient I2C interface of the expansion.
 
 ## Related Link
 
-- [Document & Datasheet](https://docs.m5stack.com/en/unit/envIII)
+- [Unit PaHub2 - Document & Datasheet](https://docs.m5stack.com/en/unit/pahub2)
+
 
 ## Required Libraries:
 
-- [Adafruit_BMP280_Library](https://github.com/adafruit/Adafruit_BMP280_Library)
+- [M5UnitUnified](https://github.com/m5stack/M5UnitUnified)
+- [M5Utility](https://github.com/m5stack/M5Utility)
+- [M5HAL](https://github.com/m5stack/M5HAL)
 
 ## License
 
-- [M5Unit-ENV - MIT](LICENSE)
+- [M5Unit-HUB- MIT](LICENSE)
+
+
+## Examples
+See also [examples/UnitUnified](examples/UnitUnified)
+
+## Doxygen document
+If you want to generate documents on your local machine, execute the following command
+
 ```
+bash docs/doxy.sh
+```
+
+It will output it under docs/html  
+If you want to output Git commit hashes to html, do it for the git cloned folder.
+
+### Required
+- [Doxyegn](https://www.doxygen.nl/)
+- [pcregrep](https://formulae.brew.sh/formula/pcre2)
+- [Git](https://git-scm.com/) (Output commit hash to html)
