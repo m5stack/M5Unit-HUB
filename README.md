@@ -27,9 +27,6 @@ PaHUB2, is an I2C Expandable Hub, which can expand a single I2C HY2.0-4P interfa
 - [M5Unit-HUB- MIT](LICENSE)
 
 
-## Examples
-See also [examples/UnitUnified](examples/UnitUnified)
-
 ## Doxygen document
 If you want to generate documents on your local machine, execute the following command
 
