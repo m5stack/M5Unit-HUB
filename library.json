@@ -23,5 +23,6 @@
   ],
   "version": "0.0.0",
   "frameworks": ["arduino", "espidf"],
-  "platforms": ["espressif32"]
+  "platforms": ["espressif32"],
+  "headers": "M5UnitHUB.h"
 }
