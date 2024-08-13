@@ -34,13 +34,11 @@ class UnitPaHub : public Component {
 
    protected:
     virtual Adapter* ensure_adapter(const uint8_t ch) override;
-    virtual m5::hal::error::error_t select_channel(
-        const uint8_t ch = 8) override;
+    virtual m5::hal::error::error_t select_channel(const uint8_t ch = 8) override;
 
    protected:
-    std::array<std::unique_ptr<Adapter>, +MAX_CHANNEL>
-        _adapters{};     // For children
-    uint8_t _current{};  // current channel 0 ~ MAX_CHANNEL
+    std::array<std::unique_ptr<Adapter>, +MAX_CHANNEL> _adapters{};  // For children
+    uint8_t _current{};                                              // current channel 0 ~ MAX_CHANNEL
 };
 
 }  // namespace unit
