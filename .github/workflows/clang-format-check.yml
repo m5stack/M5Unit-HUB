@@ -29,9 +29,7 @@ jobs:
     strategy:
       matrix:
         path:
-          #- check: './'    # path to include
-          #  exclude: ''    # path to exclude
-          - check: 'src
+          - check: 'src'
           - check: 'test'
           #   exclude: '(Fonts)' # Exclude file paths containing "Fonts"
           # - check: 'examples'
