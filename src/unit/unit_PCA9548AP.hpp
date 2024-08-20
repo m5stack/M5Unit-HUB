@@ -39,7 +39,7 @@ class UnitPCA9548AP : public Component {
 
     /*!
       @brief Read channel status bits
-      @param[out] bits 
+      @param[out] bits Status bits
       @return True if successful
     */
     bool readChannel(uint8_t& bits);

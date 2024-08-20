@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 /*!
-  @file unit_PCA9548AP.hpp
+  @file unit_PCA9548AP.cpp
   @brief PCA9548AP Unit for M5UnitUnified
  */
 #include "unit_PCA9548AP.hpp"
