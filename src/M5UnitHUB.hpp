@@ -7,13 +7,13 @@
   @file M5UnitHUB.hpp
   @brief Main header of M5UnitHUB
 
-  @mainpage M5UnitHUB
+  @mainpage M5Unit-HUB
   Library for UnitHUB using M5UnitUnified.
 */
 #ifndef M5_UNIT_HUB_HPP
 #define M5_UNIT_HUB_HPP
 
-#include "unit/unit_PaHub.hpp"
+#include "unit/unit_PCA9548AP.hpp"
 
 /*!
   @namespace m5
@@ -25,7 +25,11 @@ namespace m5 {
   @namespace unit
   @brief Unit-related namespace
  */
-namespace unit {}  // namespace unit
+namespace unit {
+
+using UnitPaHub2 = m5::unit::UnitPCA9548AP;
+
+}  // namespace unit
 }  // namespace m5
 
 #endif
