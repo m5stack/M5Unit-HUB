@@ -32,7 +32,7 @@ bool UnitPCA9548AP::readChannel(uint8_t& bits) {
     return readWithTransaction(&bits, 1) == m5::hal::error::error_t::OK;
 }
 
-Adapter* UnitPCA9548AP::ensure_adapter(const uint8_t ch) {
+Adapter* UnitPCA9548AP::duplicate_adapter(const uint8_t ch) {
     if (ch >= _adapters.size()) {
         M5_LIB_LOGE("Invalid channel %u", ch);
         return nullptr;
@@ -43,13 +43,16 @@ Adapter* UnitPCA9548AP::ensure_adapter(const uint8_t ch) {
         M5_LIB_LOGE("Not exists unit %u", ch);
         return nullptr;
     }
+    auto myadapter = adapter();
 
+#if 0
     auto& ad = _adapters[ch];
     if (!ad) {
         ad.reset(_adapter->duplicate(unit->address()));
-        // ad.reset(new PaHubAdapter(unit->address()));
     }
     return ad.get();
+#endif
+    return myadapter ? myadapter->duplicate(unit->address()) : nullptr;
 }
 
 m5::hal::error::error_t UnitPCA9548AP::select_channel(const uint8_t ch) {

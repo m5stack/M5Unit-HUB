@@ -45,7 +45,7 @@ class UnitPCA9548AP : public Component {
     bool readChannel(uint8_t& bits);
 
    protected:
-    virtual Adapter* ensure_adapter(const uint8_t ch) override;
+    virtual Adapter* duplicate_adapter(const uint8_t ch) override;
     virtual m5::hal::error::error_t select_channel(const uint8_t ch = 8) override;
 
    protected:
