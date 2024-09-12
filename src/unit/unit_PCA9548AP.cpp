@@ -24,7 +24,7 @@ const types::uid_t UnitPCA9548AP::attr{0};
 UnitPCA9548AP::UnitPCA9548AP(const uint8_t addr) : Component(addr) {
     auto ccfg         = component_config();
     ccfg.max_children = MAX_CHANNEL;
-    ccfg.clock = 400 * 1000U;
+    ccfg.clock        = 400 * 1000U;
     component_config(ccfg);
 }
 
