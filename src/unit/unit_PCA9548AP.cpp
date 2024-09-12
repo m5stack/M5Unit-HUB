@@ -22,9 +22,10 @@ const types::uid_t UnitPCA9548AP::uid{"UnitPCA9548AP"_mmh3};
 const types::uid_t UnitPCA9548AP::attr{0};
 
 UnitPCA9548AP::UnitPCA9548AP(const uint8_t addr) : Component(addr) {
-    auto cfg         = component_config();
-    cfg.max_children = MAX_CHANNEL;
-    component_config(cfg);
+    auto ccfg         = component_config();
+    ccfg.max_children = MAX_CHANNEL;
+    ccfg.clock = 400 * 1000U;
+    component_config(ccfg);
 }
 
 bool UnitPCA9548AP::readChannel(uint8_t& bits) {
