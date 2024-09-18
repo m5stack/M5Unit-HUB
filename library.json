@@ -10,19 +10,15 @@
     "type": "git",
     "url": "https://github.com/m5stack/M5Unit-HUB.git"
   },
-  "dependencies": [
-    {
-      "name": "M5UnitUnified"
-    },
-    {
-      "name": "M5Utility"
-    },
-    {
-      "name": "M5HAL"
-    }
-  ],
+  "dependencies":
+  {
+    "M5UnitUnified": "https://github.com/m5stack/M5UnitUnified.git",
+    "M5Utility": "https://github.com/m5stack/M5Utility.git",
+    "M5HAL": "https://github.com/m5stack/M5HAL.git",
+    "BME68x Sensor library": "https://github.com/boschsensortec/Bosch-BME68x-Library.git"
+  },
   "version": "0.0.0",
   "frameworks": ["arduino", "espidf"],
   "platforms": ["espressif32"],
-  "headers": "M5UnitHUB.h"
+  "headers": "M5UnitUnifiedHUB.h"
 }
