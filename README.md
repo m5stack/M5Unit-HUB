@@ -2,16 +2,15 @@
 
 ## Overview
 
-Library for UnitHUB using M5UnitUnified.  
-
-The M5UnitUnified version of the library is located under [src/unit](src/unit).  
-M5UnitUnfied has a unified API and can control multiple units via PaHub, etc.
+Library for UnitHUB using [M5UnitUnified](https://github.com/m5stack/M5UnitUnified).  
+M5UnitUnified is a library for unified handling of various M5 units products.
 
 ### SKU:U040-B
 
 PaHUB2, is an I2C Expandable Hub, which can expand a single I2C HY2.0-4P interface and connects up to 6 I2C channels. It allows you to mount slave devices with the same I2C address (by polling control the different channels to achieve in-device coexistence). Embedded PCA9548AP-I2C multi-channel switch IC, Save you worries with insufficient I2C interface of the expansion.
 
 ## Related Link
+See also examples using conventional methods here.
 
 - [Unit PaHub2 - Document & Datasheet](https://docs.m5stack.com/en/unit/pahub2)
 
