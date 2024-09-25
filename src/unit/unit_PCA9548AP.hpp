@@ -23,7 +23,7 @@ namespace unit {
 class UnitPCA9548AP : public Component {
     M5_UNIT_COMPONENT_HPP_BUILDER(UnitPCA9548AP, 0x70);
 
-   public:
+public:
     constexpr static uint8_t MAX_CHANNEL = 6;
 
     explicit UnitPCA9548AP(const uint8_t addr = DEFAULT_ADDRESS);
@@ -33,7 +33,8 @@ class UnitPCA9548AP : public Component {
       Get current channel
       @return Channel no(0...)
     */
-    uint8_t currentChannel() const {
+    uint8_t currentChannel() const
+    {
         return _current;
     }
 
@@ -44,11 +45,11 @@ class UnitPCA9548AP : public Component {
     */
     bool readChannel(uint8_t& bits);
 
-   protected:
+protected:
     virtual Adapter* duplicate_adapter(const uint8_t ch) override;
     virtual m5::hal::error::error_t select_channel(const uint8_t ch = 8) override;
 
-   protected:
+protected:
     std::array<std::unique_ptr<Adapter>, +MAX_CHANNEL> _adapters{};  // For children
     uint8_t _current{0xFF};                                          // current channel 0 ~ MAX_CHANNEL
 };

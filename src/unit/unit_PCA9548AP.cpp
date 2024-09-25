@@ -21,19 +21,22 @@ const char UnitPCA9548AP::name[] = "UnitPCA9548AP";
 const types::uid_t UnitPCA9548AP::uid{"UnitPCA9548AP"_mmh3};
 const types::uid_t UnitPCA9548AP::attr{0};
 
-UnitPCA9548AP::UnitPCA9548AP(const uint8_t addr) : Component(addr) {
+UnitPCA9548AP::UnitPCA9548AP(const uint8_t addr) : Component(addr)
+{
     auto ccfg         = component_config();
     ccfg.max_children = MAX_CHANNEL;
     ccfg.clock        = 400 * 1000U;
     component_config(ccfg);
 }
 
-bool UnitPCA9548AP::readChannel(uint8_t& bits) {
+bool UnitPCA9548AP::readChannel(uint8_t& bits)
+{
     bits = 0;
     return readWithTransaction(&bits, 1) == m5::hal::error::error_t::OK;
 }
 
-Adapter* UnitPCA9548AP::duplicate_adapter(const uint8_t ch) {
+Adapter* UnitPCA9548AP::duplicate_adapter(const uint8_t ch)
+{
     if (ch >= _adapters.size()) {
         M5_LIB_LOGE("Invalid channel %u", ch);
         return nullptr;
@@ -56,7 +59,8 @@ Adapter* UnitPCA9548AP::duplicate_adapter(const uint8_t ch) {
     return myadapter ? myadapter->duplicate(unit->address()) : nullptr;
 }
 
-m5::hal::error::error_t UnitPCA9548AP::select_channel(const uint8_t ch) {
+m5::hal::error::error_t UnitPCA9548AP::select_channel(const uint8_t ch)
+{
     // M5_LIB_LOGV("Try current to %u =>  %u", _current, ch);
     if (ch != _current && ch < MAX_CHANNEL) {
         _current       = 0;
