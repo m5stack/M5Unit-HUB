@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['m5unithub_0',['M5UnitHUB',['../index.html',1,'']]]
+  ['hub_0',['M5Unit-HUB',['../index.html',1,'']]]
 ];
