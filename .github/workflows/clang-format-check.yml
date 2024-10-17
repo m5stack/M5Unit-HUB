@@ -8,6 +8,7 @@ on:
     tags-ignore:
       - '*.*.*'
     branches:
+      - '*'
     paths:
       - '*'
       - '**.ino'
