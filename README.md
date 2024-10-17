@@ -27,6 +27,8 @@ See also examples using conventional methods here.
 
 
 ## Doxygen document
+[GitHub Pages](https://m5stack.github.io/M5Unit-HUB/)
+
 If you want to generate documents on your local machine, execute the following command
 
 ```
