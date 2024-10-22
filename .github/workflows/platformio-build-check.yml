@@ -53,7 +53,7 @@ jobs:
       
       matrix:
         example:
-          - PlotToSerial
+          - DaisyChain
 
         unit:
           - UnitPaHub

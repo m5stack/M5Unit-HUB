@@ -45,8 +45,7 @@ void setup()
         !Units.begin()) {
         M5_LOGE("Failed to begin");
         lcd.clear(TFT_RED);
-        while(true)
-        {
+        while (true) {
             m5::utility::delay(10000);
         }
     }
