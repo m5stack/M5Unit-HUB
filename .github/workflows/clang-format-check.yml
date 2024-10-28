@@ -5,6 +5,11 @@ env:
 
 on:
   push:
+    tags-ignore:
+      - '*.*.*'
+      - 'v*.*.*'
+    branches:
+      - '*'
     paths:
       - '**.ino'
       - '**.cpp'
@@ -13,7 +18,9 @@ on:
       - '**.c'
       - '**.inl'
       - '**clang-format-check.yml'
-    pull_request:
+      - '**.clang-format'
+  pull_request:
+    paths:
       - '**.ino'
       - '**.cpp'
       - '**.hpp'
@@ -21,6 +28,8 @@ on:
       - '**.c'
       - '**.inl'
       - '**clang-format-check.yml'
+      - '**.clang-format'
+  workflow_dispatch:
 
 jobs:
   formatting-check:
@@ -31,12 +40,13 @@ jobs:
         path:
           - check: 'src'
             exclude: ''
-          - check: 'examples'
-            exclude: ''
           - check: 'test'
             exclude: ''
+          - check: 'examples'
+            exclude: ''
+
     steps:
-      - name: Checkout # When pull_request is used, include it in the checkout https://zenn.dev/hkusu/articles/c731862051438b
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
