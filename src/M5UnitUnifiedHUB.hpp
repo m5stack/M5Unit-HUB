@@ -28,7 +28,7 @@ namespace m5 {
 namespace unit {
 
 using UnitPaHub  = m5::unit::UnitPCA9548AP;  // TCA9548 and PCA9548 are compatible
-using UnitPaHub2 = m5::unit::UnitPCA9548AP;
+using UnitPaHub2 = m5::unit::UnitPCA9548AP;  // Include PaHub v2.0 and PaHub v2.1
 
 }  // namespace unit
 }  // namespace m5

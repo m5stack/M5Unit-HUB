@@ -12,6 +12,7 @@
 #include <M5Utility.hpp>
 
 using namespace m5::utility::mmh3;
+using namespace m5::unit::types;
 
 namespace m5 {
 namespace unit {
@@ -19,7 +20,7 @@ namespace unit {
 // class UnitPaHub
 const char UnitPCA9548AP::name[] = "UnitPCA9548AP";
 const types::uid_t UnitPCA9548AP::uid{"UnitPCA9548AP"_mmh3};
-const types::uid_t UnitPCA9548AP::attr{0};
+const types::attr_t UnitPCA9548AP::attr{attribute::AccessI2C};
 
 UnitPCA9548AP::UnitPCA9548AP(const uint8_t addr) : Component(addr)
 {
@@ -35,28 +36,20 @@ bool UnitPCA9548AP::readChannel(uint8_t& bits)
     return readWithTransaction(&bits, 1) == m5::hal::error::error_t::OK;
 }
 
-Adapter* UnitPCA9548AP::duplicate_adapter(const uint8_t ch)
+std::shared_ptr<Adapter> UnitPCA9548AP::ensure_adapter(const uint8_t ch)
 {
-    if (ch >= _adapters.size()) {
+    if (ch >= MAX_CHANNEL) {
         M5_LIB_LOGE("Invalid channel %u", ch);
-        return nullptr;
+        return std::make_shared<Adapter>();  // Empty adapter
     }
-
     auto unit = child(ch);
     if (!unit) {
         M5_LIB_LOGE("Not exists unit %u", ch);
-        return nullptr;
+        return std::make_shared<Adapter>();  // Empty adapter
     }
-    auto myadapter = adapter();
 
-#if 0
-    auto& ad = _adapters[ch];
-    if (!ad) {
-        ad.reset(_adapter->duplicate(unit->address()));
-    }
-    return ad.get();
-#endif
-    return myadapter ? myadapter->duplicate(unit->address()) : nullptr;
+    auto ad = asAdapter<AdapterI2C>(Adapter::Type::I2C);
+    return ad ? std::shared_ptr<Adapter>(ad->duplicate(unit->address())) : std::make_shared<Adapter>();
 }
 
 m5::hal::error::error_t UnitPCA9548AP::select_channel(const uint8_t ch)
@@ -71,7 +64,7 @@ m5::hal::error::error_t UnitPCA9548AP::select_channel(const uint8_t ch)
         }
         return ret;
     }
-    return m5::hal::error::error_t::UNKNOWN_ERROR;
+    return m5::hal::error::error_t::INVALID_ARGUMENT;
 }
 
 }  // namespace unit

@@ -46,12 +46,11 @@ public:
     bool readChannel(uint8_t& bits);
 
 protected:
-    virtual Adapter* duplicate_adapter(const uint8_t ch) override;
     virtual m5::hal::error::error_t select_channel(const uint8_t ch = 8) override;
+    virtual std::shared_ptr<Adapter> ensure_adapter(const uint8_t /*ch*/) override;
 
 protected:
-    std::array<std::unique_ptr<Adapter>, +MAX_CHANNEL> _adapters{};  // For children
-    uint8_t _current{0xFF};                                          // current channel 0 ~ MAX_CHANNEL
+    uint8_t _current{0xFF};  // current channel 0 ~ MAX_CHANNEL
 };
 
 }  // namespace unit
