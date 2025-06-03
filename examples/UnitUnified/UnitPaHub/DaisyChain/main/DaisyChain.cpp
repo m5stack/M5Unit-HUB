@@ -18,11 +18,12 @@ m5::unit::UnitUnified Units;
 // Each hub must have a different address
 // https://docs.m5stack.com/en/unit/pahub2
 /*
-  the Unit can modify the I2C address of the device by adapting the level combination of A0~A2 pins. (The default
-  address is 0x70)
+  The Unit can modify the I2C address of the device by adapting the level combination of A0~A2 pins (v2.0)
+  The Unit can modify the I2C address of the device by adapting the level combination of DIP switch (v2.1)
+  (The default address is 0x70)
 */
-m5::unit::UnitPaHub2 hub0{};  // 0x70 as default
-m5::unit::UnitPaHub2 hub1{0x71};
+m5::unit::UnitPaHub2 hub0{};      // 1st PaHub (0x70 as default)
+m5::unit::UnitPaHub2 hub1{0x71};  // 2nd PaHub
 
 // (*1) If other units are used, change accordingly
 m5::unit::UnitVmeter vmeter{};
@@ -37,6 +38,7 @@ void setup()
     auto pin_num_scl = M5.getPin(m5::pin_name_t::port_a_scl);
     M5_LOGI("getPin: SDA:%u SCL:%u", pin_num_sda, pin_num_scl);
 
+    Wire.end();
     Wire.begin(pin_num_sda, pin_num_scl, 400000U);
 
     if (!hub1.add(vmeter, 5) ||    // Connect unit to hub1 channel 5
@@ -44,6 +46,8 @@ void setup()
         !Units.add(hub0, Wire) ||  // Connect hub0 to core
         !Units.begin()) {
         M5_LOGE("Failed to begin");
+        M5_LOGW("%s", Units.debugInfo().c_str());
+
         lcd.clear(TFT_RED);
         while (true) {
             m5::utility::delay(10000);
@@ -61,6 +65,6 @@ void loop()
     Units.update();
     if (vmeter.updated()) {
         // (*1) If other units are used, change accordingly
-        M5_LOGI("\n>Voltage:%f", vmeter.voltage());
+        M5.Log.printf(">Voltage:%f\n", vmeter.voltage());
     }
 }
