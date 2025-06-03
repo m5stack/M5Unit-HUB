@@ -11,9 +11,9 @@
         "url": "https://github.com/m5stack/M5Unit-HUB.git"
     },
     "dependencies": {
-        "M5UnitUnified": "https://github.com/m5stack/M5UnitUnified.git"
+        "m5stack/M5UnitUnified": ">=0.1.0"
     },
-    "version": "0.0.2",
+    "version": "0.1.0",
     "frameworks": [
         "arduino"
     ],
