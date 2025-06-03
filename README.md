@@ -7,12 +7,22 @@ M5UnitUnified is a library for unified handling of various M5 units products.
 
 ### SKU:U040-B
 
-PaHUB2, is an I2C Expandable Hub, which can expand a single I2C HY2.0-4P interface and connects up to 6 I2C channels. It allows you to mount slave devices with the same I2C address (by polling control the different channels to achieve in-device coexistence). Embedded PCA9548AP-I2C multi-channel switch IC, Save you worries with insufficient I2C interface of the expansion.
+Unit Pahub v2.0 is an I2C device splitter that can expand a single I2C HY2.0-4P interface to six channels, allowing the connection of multiple slave devices with the same I2C address (by controlling the polling of different channels to enable coexistence of devices with the same address). 
+
+It features an embedded PCA9548AP-I2C multi-channel switch IC, supporting the expansion of 6 groups of I2C devices.
+
+
+### SKU:U040-B-V21
+Unit PaHub v2.1 is an I2C multiplexer unit that uses the PCA9548AP chip solution to expand a single I2C interface into six channels. By selecting different channels, it allows multiple devices with the same or different I2C addresses to coexist on the same I2C bus (switching via polling channels). 
+
+The module is equipped with an onboard DIP switch to easily adjust the I2C address of Unit PaHub v2.1, supporting multi-unit cascading to connect more I2C devices.
+
 
 ## Related Link
 See also examples using conventional methods here.
 
-- [Unit PaHub2 - Document & Datasheet](https://docs.m5stack.com/en/unit/pahub2)
+- [Unit PaHub v2.0 - Document & Datasheet](https://docs.m5stack.com/en/unit/pahub2)
+- [Unit PaHub v2.1 - Document & Datasheet](https://docs.m5stack.com/en/unit/Unit-PaHub%20v2.1)
 
 
 ## Required Libraries:
