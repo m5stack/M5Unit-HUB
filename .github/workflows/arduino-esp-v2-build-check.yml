@@ -2,7 +2,7 @@ name: Build(arduino-esp32:2.x)
 
 env:
   SKETCH_NAMES_FIND_START: ./examples/UnitUnified
-  REQUIRED_LIBRARIES: M5Unified,M5UnitUnified
+  REQUIRED_LIBRARIES: M5Unified,M5UnitUnified,M5Unit-METER # example needs METER 
 
 on:
   push:
@@ -16,10 +16,6 @@ on:
       - 'src/unit/**.hpp'
       - 'src/unit/**.h'
       - 'src/unit/**.c'
-      - 'test/**.cpp'
-      - 'test/**.hpp'
-      - 'test/**.h'
-      - 'test/**.c'
       - 'examples/UnitUnified/**.ino'
       - 'examples/UnitUnified/**.cpp'
       - 'examples/UnitUnified/**.hpp'
@@ -32,10 +28,6 @@ on:
       - 'src/unit/**.hpp'
       - 'src/unit/**.h'
       - 'src/unit/**.c'
-      - 'test/**.cpp'
-      - 'test/**.hpp'
-      - 'test/**.h'
-      - 'test/**.c'
       - 'examples/UnitUnified/**.ino'
       - 'examples/UnitUnified/**.cpp'
       - 'examples/UnitUnified/**.hpp'
@@ -44,10 +36,19 @@ on:
       - '**arduino-esp-v2-build-check.yml'
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: ${{ matrix.unit }}:${{ matrix.sketch }}:${{matrix.board}}@${{matrix.platform-version}}
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     strategy:
       fail-fast: false
@@ -85,12 +86,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-
-      - name: Checkout M5Unit-METER for examples
-        uses: actions/checkout@v4
-        with:
-          repository: m5stack/M5Unit-METER
-          path: CustomLibrary_M5Unit-METER
 
       # Build 
       - name: Compile examples
