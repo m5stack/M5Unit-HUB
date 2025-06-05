@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">M5Unit-HUB<span id="projectnumber">&#160;0.0.2 git rev:98420fc</span>
+   <div id="projectname">M5Unit-HUB<span id="projectnumber">&#160;0.1.0 git rev:1570029</span>
    </div>
   </td>
  </tr>
@@ -133,20 +133,19 @@ $(function(){initNavTree('unit___p_c_a9548_a_p_8hpp_source.html',''); initResiza
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classm5_1_1unit_1_1_unit_p_c_a9548_a_p.html#a2c790df8d7bccc20267ce39b2f5aada2">readChannel</a>(uint8_t&amp; bits);</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="keyword">protected</span>:</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keyword">virtual</span> Adapter* duplicate_adapter(<span class="keyword">const</span> uint8_t ch) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keyword">virtual</span> m5::hal::error::error_t select_channel(<span class="keyword">const</span> uint8_t ch = 8) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keyword">virtual</span> m5::hal::error::error_t select_channel(<span class="keyword">const</span> uint8_t ch = 8) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keyword">virtual</span> std::shared_ptr&lt;Adapter&gt; ensure_adapter(<span class="keyword">const</span> uint8_t <span class="comment">/*ch*/</span>) <span class="keyword">override</span>;</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="keyword">protected</span>:</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    std::array&lt;std::unique_ptr&lt;Adapter&gt;, +MAX_CHANNEL&gt; _adapters{};  <span class="comment">// For children</span></div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    uint8_t _current{0xFF};                                          <span class="comment">// current channel 0 ~ MAX_CHANNEL</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>};</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    uint8_t _current{0xFF};  <span class="comment">// current channel 0 ~ MAX_CHANNEL</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>};</div>
 </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>}  <span class="comment">// namespace unit</span></div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>}  <span class="comment">// namespace m5</span></div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>}  <span class="comment">// namespace unit</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>}  <span class="comment">// namespace m5</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassm5_1_1unit_1_1_unit_p_c_a9548_a_p_html"><div class="ttname"><a href="classm5_1_1unit_1_1_unit_p_c_a9548_a_p.html">m5::unit::UnitPCA9548AP</a></div><div class="ttdoc">PCA9548AP unit.</div><div class="ttdef"><b>Definition</b> unit_PCA9548AP.hpp:23</div></div>
-<div class="ttc" id="aclassm5_1_1unit_1_1_unit_p_c_a9548_a_p_html_a2c790df8d7bccc20267ce39b2f5aada2"><div class="ttname"><a href="classm5_1_1unit_1_1_unit_p_c_a9548_a_p.html#a2c790df8d7bccc20267ce39b2f5aada2">m5::unit::UnitPCA9548AP::readChannel</a></div><div class="ttdeci">bool readChannel(uint8_t &amp;bits)</div><div class="ttdoc">Read channel status bits.</div><div class="ttdef"><b>Definition</b> unit_PCA9548AP.cpp:32</div></div>
+<div class="ttc" id="aclassm5_1_1unit_1_1_unit_p_c_a9548_a_p_html_a2c790df8d7bccc20267ce39b2f5aada2"><div class="ttname"><a href="classm5_1_1unit_1_1_unit_p_c_a9548_a_p.html#a2c790df8d7bccc20267ce39b2f5aada2">m5::unit::UnitPCA9548AP::readChannel</a></div><div class="ttdeci">bool readChannel(uint8_t &amp;bits)</div><div class="ttdoc">Read channel status bits.</div><div class="ttdef"><b>Definition</b> unit_PCA9548AP.cpp:33</div></div>
 <div class="ttc" id="aclassm5_1_1unit_1_1_unit_p_c_a9548_a_p_html_a47d4fc1c80ed0ba54bd60c68bd085797"><div class="ttname"><a href="classm5_1_1unit_1_1_unit_p_c_a9548_a_p.html#a47d4fc1c80ed0ba54bd60c68bd085797">m5::unit::UnitPCA9548AP::currentChannel</a></div><div class="ttdeci">uint8_t currentChannel() const</div><div class="ttdef"><b>Definition</b> unit_PCA9548AP.hpp:36</div></div>
 <div class="ttc" id="anamespacem5_html"><div class="ttname"><a href="namespacem5.html">m5</a></div><div class="ttdoc">Top level namespace of M5stack.</div></div>
 <div class="ttc" id="anamespaceunit_html"><div class="ttname"><a href="namespaceunit.html">unit</a></div><div class="ttdoc">Unit-related namespace.</div></div>

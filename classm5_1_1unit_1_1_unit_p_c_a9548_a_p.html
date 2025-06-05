@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">M5Unit-HUB<span id="projectnumber">&#160;0.0.2 git rev:98420fc</span>
+   <div id="projectname">M5Unit-HUB<span id="projectnumber">&#160;0.1.0 git rev:1570029</span>
    </div>
   </td>
  </tr>
@@ -136,18 +136,15 @@ static constexpr uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>M
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a49dff945b478cd1affde6e36abda9445" id="r_a49dff945b478cd1affde6e36abda9445"><td class="memItemLeft" align="right" valign="top"><a id="a49dff945b478cd1affde6e36abda9445" name="a49dff945b478cd1affde6e36abda9445"></a>
-virtual Adapter *&#160;</td><td class="memItemRight" valign="bottom"><b>duplicate_adapter</b> (const uint8_t ch) override</td></tr>
-<tr class="separator:a49dff945b478cd1affde6e36abda9445"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a200708bbd4a6f8dd2e62cb77d4a4b6e2" id="r_a200708bbd4a6f8dd2e62cb77d4a4b6e2"><td class="memItemLeft" align="right" valign="top"><a id="a200708bbd4a6f8dd2e62cb77d4a4b6e2" name="a200708bbd4a6f8dd2e62cb77d4a4b6e2"></a>
 virtual m5::hal::error::error_t&#160;</td><td class="memItemRight" valign="bottom"><b>select_channel</b> (const uint8_t ch=8) override</td></tr>
 <tr class="separator:a200708bbd4a6f8dd2e62cb77d4a4b6e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2fd75c3151e7e821f57925404f2e31b" id="r_ac2fd75c3151e7e821f57925404f2e31b"><td class="memItemLeft" align="right" valign="top"><a id="ac2fd75c3151e7e821f57925404f2e31b" name="ac2fd75c3151e7e821f57925404f2e31b"></a>
+virtual std::shared_ptr&lt; Adapter &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>ensure_adapter</b> (const uint8_t) override</td></tr>
+<tr class="separator:ac2fd75c3151e7e821f57925404f2e31b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:aacfe51686ea85abf3ac7f929951dab2f" id="r_aacfe51686ea85abf3ac7f929951dab2f"><td class="memItemLeft" align="right" valign="top"><a id="aacfe51686ea85abf3ac7f929951dab2f" name="aacfe51686ea85abf3ac7f929951dab2f"></a>
-std::array&lt; std::unique_ptr&lt; Adapter &gt;,+MAX_CHANNEL &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_adapters</b> {}</td></tr>
-<tr class="separator:aacfe51686ea85abf3ac7f929951dab2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8120c0f73035461a57e14c7bec91a9f2" id="r_a8120c0f73035461a57e14c7bec91a9f2"><td class="memItemLeft" align="right" valign="top"><a id="a8120c0f73035461a57e14c7bec91a9f2" name="a8120c0f73035461a57e14c7bec91a9f2"></a>
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>_current</b> {0xFF}</td></tr>
 <tr class="separator:a8120c0f73035461a57e14c7bec91a9f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
