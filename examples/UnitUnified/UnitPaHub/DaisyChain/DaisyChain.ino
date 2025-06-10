@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: MIT
  */
 /*
-  Example: Daisy chaining Unit-PaHub
+  Example: Daisy chaining UnitPaHub
 */
 /*
 *********************************************************************************************
   Note for ArduinoIDE
   Install the necessary unit libraries according to the units used in example.
-  (Initially, M5Unit-METER  is required)
+  (This example requires the M5Unit-METER library)
   See alse main/DaisyChain.cpp
 *********************************************************************************************
 */
