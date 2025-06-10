@@ -17,7 +17,7 @@ namespace m5 {
 namespace unit {
 
 /*!
-  @class UnitPCA9548AP
+  @class m5::unit::UnitPCA9548AP
   @brief PCA9548AP unit
  */
 class UnitPCA9548AP : public Component {
@@ -30,7 +30,7 @@ public:
     virtual ~UnitPCA9548AP() = default;
 
     /*!
-      Get current channel
+      @brief Get current channel
       @return Channel no(0...)
     */
     uint8_t currentChannel() const
@@ -46,8 +46,8 @@ public:
     bool readChannel(uint8_t& bits);
 
 protected:
-    virtual m5::hal::error::error_t select_channel(const uint8_t ch = 8) override;
-    virtual std::shared_ptr<Adapter> ensure_adapter(const uint8_t /*ch*/) override;
+    virtual m5::hal::error::error_t select_channel(const uint8_t ch) override;
+    virtual std::shared_ptr<Adapter> ensure_adapter(const uint8_t ch) override;
 
 protected:
     uint8_t _current{0xFF};  // current channel 0 ~ MAX_CHANNEL
