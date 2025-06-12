@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">M5Unit-HUB<span id="projectnumber">&#160;0.1.0 git rev:1570029</span>
+   <div id="projectname">M5Unit-HUB<span id="projectnumber">&#160;0.2.0 git rev:52f7e8a</span>
    </div>
   </td>
  </tr>
@@ -123,6 +123,7 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>UnitPCA9548AP</b> (const uint8_t addr=DEFAULT_ADDRESS)</td></tr>
 <tr class="separator:a11039d7c9d31dec2ba064effd72b4a5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47d4fc1c80ed0ba54bd60c68bd085797" id="r_a47d4fc1c80ed0ba54bd60c68bd085797"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47d4fc1c80ed0ba54bd60c68bd085797">currentChannel</a> () const</td></tr>
+<tr class="memdesc:a47d4fc1c80ed0ba54bd60c68bd085797"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get current channel.  <br /></td></tr>
 <tr class="separator:a47d4fc1c80ed0ba54bd60c68bd085797"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c790df8d7bccc20267ce39b2f5aada2" id="r_a2c790df8d7bccc20267ce39b2f5aada2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c790df8d7bccc20267ce39b2f5aada2">readChannel</a> (uint8_t &amp;bits)</td></tr>
 <tr class="memdesc:a2c790df8d7bccc20267ce39b2f5aada2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read channel status bits.  <br /></td></tr>
@@ -136,12 +137,12 @@ static constexpr uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>M
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a200708bbd4a6f8dd2e62cb77d4a4b6e2" id="r_a200708bbd4a6f8dd2e62cb77d4a4b6e2"><td class="memItemLeft" align="right" valign="top"><a id="a200708bbd4a6f8dd2e62cb77d4a4b6e2" name="a200708bbd4a6f8dd2e62cb77d4a4b6e2"></a>
-virtual m5::hal::error::error_t&#160;</td><td class="memItemRight" valign="bottom"><b>select_channel</b> (const uint8_t ch=8) override</td></tr>
-<tr class="separator:a200708bbd4a6f8dd2e62cb77d4a4b6e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2fd75c3151e7e821f57925404f2e31b" id="r_ac2fd75c3151e7e821f57925404f2e31b"><td class="memItemLeft" align="right" valign="top"><a id="ac2fd75c3151e7e821f57925404f2e31b" name="ac2fd75c3151e7e821f57925404f2e31b"></a>
-virtual std::shared_ptr&lt; Adapter &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>ensure_adapter</b> (const uint8_t) override</td></tr>
-<tr class="separator:ac2fd75c3151e7e821f57925404f2e31b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed8593f18d5374a019d5fb3e8c1233db" id="r_aed8593f18d5374a019d5fb3e8c1233db"><td class="memItemLeft" align="right" valign="top"><a id="aed8593f18d5374a019d5fb3e8c1233db" name="aed8593f18d5374a019d5fb3e8c1233db"></a>
+virtual m5::hal::error::error_t&#160;</td><td class="memItemRight" valign="bottom"><b>select_channel</b> (const uint8_t ch) override</td></tr>
+<tr class="separator:aed8593f18d5374a019d5fb3e8c1233db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48dccdd9cd27f4e095ed4105a7d3c8d5" id="r_a48dccdd9cd27f4e095ed4105a7d3c8d5"><td class="memItemLeft" align="right" valign="top"><a id="a48dccdd9cd27f4e095ed4105a7d3c8d5" name="a48dccdd9cd27f4e095ed4105a7d3c8d5"></a>
+virtual std::shared_ptr&lt; Adapter &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>ensure_adapter</b> (const uint8_t ch) override</td></tr>
+<tr class="separator:a48dccdd9cd27f4e095ed4105a7d3c8d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -174,7 +175,9 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>_current</b> {0xFF
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Get current channel </p><dl class="section return"><dt>Returns</dt><dd>Channel no(0...) </dd></dl>
+
+<p>Get current channel. </p>
+<dl class="section return"><dt>Returns</dt><dd>Channel no(0...) </dd></dl>
 
 </div>
 </div>
