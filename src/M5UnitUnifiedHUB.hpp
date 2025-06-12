@@ -14,6 +14,7 @@
 #define M5_UNIT_UNIFIED_HUB_HPP
 
 #include "unit/unit_PCA9548AP.hpp"
+#include "unit/unit_PbHub.hpp"
 
 /*!
   @namespace m5

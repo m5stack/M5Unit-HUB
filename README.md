@@ -18,12 +18,18 @@ Unit PaHub v2.1 is an I2C multiplexer unit that uses the PCA9548AP chip solution
 The module is equipped with an onboard DIP switch to easily adjust the I2C address of Unit PaHub v2.1, supporting multi-unit cascading to connect more I2C devices.
 
 
+### SKU:U041-B
+Unit Pbhub v1.1 is an I2C-controlled 6-channel PORT.B expander. Each Port B interface can achieve GPIO, PWM, Servo control, ADC sampling, RGB light control, and more. It is internally controlled by an STM32F030 microcontroller.
+
+Note : Not all Units with a black interface (PortB) support expansion through PbHUB. PbHUB can only be applied to basic single-bus communication, through the I2C protocol (built-in MEGA328) to achieve basic digital read and write, analog Read and write. But for units such as Weight (built-in HX711) that not only need to read analog, but also depend on the timing of the Unit, PbHUB cannot be expanded.
+
+
 ## Related Link
 See also examples using conventional methods here.
 
 - [Unit PaHub v2.0 - Document & Datasheet](https://docs.m5stack.com/en/unit/pahub2)
 - [Unit PaHub v2.1 - Document & Datasheet](https://docs.m5stack.com/en/unit/Unit-PaHub%20v2.1)
-
+- [Unit PbHub v1.1 - Document & Datasheet](https://docs.m5stack.com/ja/unit/pbhub_1.1)
 
 ## Required Libraries:
 

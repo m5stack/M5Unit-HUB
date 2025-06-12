@@ -55,12 +55,14 @@ std::shared_ptr<Adapter> UnitPCA9548AP::ensure_adapter(const uint8_t ch)
 m5::hal::error::error_t UnitPCA9548AP::select_channel(const uint8_t ch)
 {
     // M5_LIB_LOGV("Try current to %u =>  %u", _current, ch);
-    if (ch != _current && ch < MAX_CHANNEL) {
-        _current       = 0;
-        uint8_t buf[1] = {static_cast<uint8_t>((1U << ch) & 0xFF)};
-        auto ret       = writeWithTransaction(buf, 1);
-        if (ret == m5::hal::error::error_t::OK) {
-            _current = ch;
+    if (ch < MAX_CHANNEL) {
+        m5::hal::error::error_t ret{m5::hal::error::error_t::OK};
+        if (ch != _current) {
+            uint8_t buf = (1U << ch);
+            ret         = writeWithTransaction(&buf, 1);
+            if (ret == m5::hal::error::error_t::OK) {
+                _current = ch;
+            }
         }
         return ret;
     }

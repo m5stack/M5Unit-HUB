@@ -5,7 +5,7 @@
  */
 /*
   Example: Example of daisy chaining Unit-PaHub
-  Device => PaHub2 ch:0 => PaHub2 ch:5 => UnitVmeter (*1)
+  Device ---> PaHub2 ch:0 ---> PaHub2 ch:5 ---> UnitVmeter (*1)
 */
 #include <M5Unified.h>
 #include <M5UnitUnified.h>
