@@ -60,7 +60,7 @@ jobs:
 
     strategy:
       fail-fast: false
-#      max-parallel: 1
+      max-parallel: 20
       matrix:
         platform-url:
           - https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/arduino/package_m5stack_index.json
@@ -99,7 +99,7 @@ jobs:
 #          - m5stack_unit_cams3
 
         platform-version:
-          - 2.1.2
+          - 3.2.1
 
         platform:
           - m5stack

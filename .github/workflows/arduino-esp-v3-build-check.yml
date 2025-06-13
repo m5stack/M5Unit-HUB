@@ -52,7 +52,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      #max-parallel: 1
+      max-parallel: 20
       matrix:
         platform-url:
           - https://espressif.github.io/arduino-esp32/package_esp32_index.json
