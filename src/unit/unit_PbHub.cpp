@@ -13,6 +13,7 @@
 
 using namespace m5::utility::mmh3;
 using namespace m5::unit;
+using namespace m5::unit::types;
 using namespace m5::unit::pbhub;
 using namespace m5::unit::pbhub::command;
 
@@ -206,8 +207,7 @@ public:
 // class UnitPbHub
 const char UnitPbHub::name[] = "UnitPbHub";
 const types::uid_t UnitPbHub::uid{"UnitPbHub"_mmh3};
-// const types::attr_t UnitPbHub::attr{attribute::AccessI2C};
-const types::attr_t UnitPbHub::attr{};
+const types::attr_t UnitPbHub::attr{attribute::AccessI2C};
 
 UnitPbHub::UnitPbHub(const uint8_t addr) : Component(addr)
 {
