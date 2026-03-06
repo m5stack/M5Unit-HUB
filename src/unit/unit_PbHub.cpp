@@ -219,11 +219,24 @@ UnitPbHub::UnitPbHub(const uint8_t addr) : Component(addr)
 
 bool UnitPbHub::begin()
 {
-    // Detect
+    // Detect (retry for SoftwareI2C first-transaction NO_ACK)
     bool tmp{};
-    for (uint8_t ch = 0; ch < MAX_CHANNEL; ++ch) {
+    bool detected{false};
+    for (uint8_t retry = 0; retry < 3; ++retry) {
+        if (read_digital(0, 0, tmp)) {
+            detected = true;
+            break;
+        }
+        M5_LIB_LOGW("PbHub detect retry %u", retry);
+        m5::utility::delay(100);
+    }
+    if (!detected) {
+        M5_LIB_LOGE("Cannot detect PbHub");
+        return false;
+    }
+    for (uint8_t ch = 1; ch < MAX_CHANNEL; ++ch) {
         if (!read_digital(ch, 0, tmp)) {
-            M5_LIB_LOGE("Cannot detect PbHub");
+            M5_LIB_LOGE("Cannot detect PbHub ch:%u", ch);
             return false;
         }
     }
@@ -277,7 +290,14 @@ bool UnitPbHub::writeLEDColor(const uint8_t ch, const uint16_t index, const uint
     buf[3] = rgb888 >> 8;    // G
     buf[4] = rgb888 & 0xff;  // B
     // m5::utility::log::dump(buf.data(), buf.size(), false);
-    return reg && writeRegister(reg, buf.data(), buf.size());
+    if (reg && writeRegister(reg, buf.data(), buf.size())) {
+        // Firmware outputs (index+1) LEDs via WS2812 bit-bang inside I2C ISR
+        // with I2C peripheral interrupts disabled, causing clock stretching
+        // on the next transaction (~40µs/LED + 100µs reset).
+        wait_led_output(index + 1U);
+        return true;
+    }
+    return false;
 }
 
 bool UnitPbHub::fillLEDColor(const uint8_t ch, const uint32_t rgb888, const uint16_t first, const uint16_t count)
@@ -299,7 +319,15 @@ bool UnitPbHub::fillLEDColor(const uint8_t ch, const uint32_t rgb888, const uint
     buf[5] = rgb888 >> 8;    // G
     buf[6] = rgb888 & 0xff;  // B
     // m5::utility::log::dump(buf.data(), buf.size(), false);
-    return reg && writeRegister(reg, buf.data(), buf.size());
+    if (reg && writeRegister(reg, buf.data(), buf.size())) {
+        // Firmware outputs min(first+num, _numLED[ch]) LEDs via WS2812 bit-bang inside I2C ISR
+        // with I2C peripheral interrupts disabled, causing clock stretching
+        // on the next transaction (~40µs/LED + 100µs reset).
+        uint16_t output = (ch < MAX_CHANNEL) ? std::min<uint16_t>(first + num, _numLED[ch]) : num;
+        wait_led_output(output);
+        return true;
+    }
+    return false;
 }
 
 bool UnitPbHub::writeLEDBrightness(const uint8_t ch, const uint8_t value)
@@ -358,6 +386,14 @@ bool UnitPbHub::changeI2CAddress(const uint8_t addr)
         } while (m5::utility::millis() <= timeout_at);
     }
     return false;
+}
+
+void UnitPbHub::wait_led_output(const uint16_t num_leds) const
+{
+    if (num_leds) {
+        // WS2812 bit-bang: ~40µs/LED + ~100µs reset
+        m5::utility::delayMicroseconds(num_leds * 40U + 100U);
+    }
 }
 
 //
