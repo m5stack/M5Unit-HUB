@@ -48,7 +48,7 @@ void setup()
         !hub1.add(kmeter_iso, 4) ||  // Connect UnitKmeterISO to hub1 channel 4
         !hub1.add(ameter, 2) ||      // Connect UnitAmeter to hub1 channel 2
         !hub0.add(hub1, 4)) {        // Connect hub1 to hub0 channel 4
-        M5_LOGE("Failed to begin");
+        M5_LOGE("Failed to add");
         M5_LOGW("%s", Units.debugInfo().c_str());
 
         lcd.fillScreen(TFT_RED);
@@ -58,27 +58,24 @@ void setup()
     }
 
     auto board = M5.getBoard();
+
+    bool unit_ready{};
     if (board == m5::board_t::board_ArduinoNessoN1) {
-        // NessoN1 uses Wire internally, so use M5HAL SoftwareI2C for GROVE
+        // NessoN1: Wire/Wire1 are used internally, use M5HAL SoftwareI2C for GROVE
         auto pin_num_sda = M5.getPin(m5::pin_name_t::port_b_out);
         auto pin_num_scl = M5.getPin(m5::pin_name_t::port_b_in);
-        M5_LOGI("getPin(NessoN1): SDA:%u SCL:%u", pin_num_sda, pin_num_scl);
+        M5_LOGI("getPin(M5HAL): SDA:%u SCL:%u", pin_num_sda, pin_num_scl);
 
         m5::hal::bus::I2CBusConfig i2c_cfg;
         i2c_cfg.pin_sda = m5::hal::gpio::getPin(pin_num_sda);
         i2c_cfg.pin_scl = m5::hal::gpio::getPin(pin_num_scl);
         auto i2c_bus    = m5::hal::bus::i2c::getBus(i2c_cfg);
         M5_LOGI("Bus:%d", i2c_bus.has_value());
-
-        if (!Units.add(hub0, i2c_bus ? i2c_bus.value() : nullptr) || !Units.begin()) {
-            M5_LOGE("Failed to begin");
-            M5_LOGW("%s", Units.debugInfo().c_str());
-
-            lcd.fillScreen(TFT_RED);
-            while (true) {
-                m5::utility::delay(10000);
-            }
-        }
+        unit_ready = Units.add(hub0, i2c_bus ? i2c_bus.value() : nullptr) && Units.begin();
+    } else if (board == m5::board_t::board_M5NanoC6) {
+        // NanoC6: Wire.begin() conflicts with m5gfx::i2c, use M5.Ex_I2C
+        M5_LOGI("Using M5.Ex_I2C");
+        unit_ready = Units.add(hub0, M5.Ex_I2C) && Units.begin();
     } else {
         auto pin_num_sda = M5.getPin(m5::pin_name_t::port_a_sda);
         auto pin_num_scl = M5.getPin(m5::pin_name_t::port_a_scl);
@@ -86,14 +83,16 @@ void setup()
 
         Wire.end();
         Wire.begin(pin_num_sda, pin_num_scl, 400000U);
-        if (!Units.add(hub0, Wire) || !Units.begin()) {
-            M5_LOGE("Failed to begin");
-            M5_LOGW("%s", Units.debugInfo().c_str());
+        unit_ready = Units.add(hub0, Wire) && Units.begin();
+    }
 
-            lcd.fillScreen(TFT_RED);
-            while (true) {
-                m5::utility::delay(10000);
-            }
+    if (!unit_ready) {
+        M5_LOGE("Failed to begin");
+        M5_LOGW("%s", Units.debugInfo().c_str());
+
+        lcd.fillScreen(TFT_RED);
+        while (true) {
+            m5::utility::delay(10000);
         }
     }
     M5_LOGI("M5UnitUnified has been begun");
