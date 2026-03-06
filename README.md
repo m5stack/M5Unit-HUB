@@ -29,7 +29,7 @@ See also examples using conventional methods here.
 
 - [Unit PaHub v2.0 - Document & Datasheet](https://docs.m5stack.com/en/unit/pahub2)
 - [Unit PaHub v2.1 - Document & Datasheet](https://docs.m5stack.com/en/unit/Unit-PaHub%20v2.1)
-- [Unit PbHub v1.1 - Document & Datasheet](https://docs.m5stack.com/ja/unit/pbhub_1.1)
+- [Unit PbHub v1.1 - Document & Datasheet](https://docs.m5stack.com/en/unit/pbhub_1.1)
 
 ## Required Libraries:
 
@@ -39,7 +39,7 @@ See also examples using conventional methods here.
 
 ## License
 
-- [M5Unit-HUB- MIT](LICENSE)
+- [M5Unit-HUB - MIT](LICENSE)
 
 ## Examples
 See also [examples/UnitUnified](examples/UnitUnified)
@@ -57,6 +57,6 @@ It will output it under docs/html
 If you want to output Git commit hashes to html, do it for the git cloned folder.
 
 ### Required
-- [Doxyegn](https://www.doxygen.nl/)
+- [Doxygen](https://www.doxygen.nl/)
 - [pcregrep](https://formulae.brew.sh/formula/pcre2)
 - [Git](https://git-scm.com/) (Output commit hash to html)
