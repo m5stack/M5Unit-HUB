@@ -188,15 +188,276 @@ public:
         uint8_t _channel{};
     };
 
+    // I2C_Class version: reuses I2CClassImpl for transport, adds PbHub GPIO overrides
+    class PbHubI2CClassImpl : public AdapterI2C::I2CClassImpl {
+    public:
+        PbHubI2CClassImpl(m5::I2C_Class& i2c, const uint8_t addr, const uint32_t clock, const uint8_t ch)
+            : AdapterI2C::I2CClassImpl(i2c, addr, clock), _channel{ch}
+        {
+        }
+
+        static constexpr uint8_t IO_RX{0};
+        static constexpr uint8_t IO_TX{1};
+
+        // RX
+        inline virtual m5::hal::error::error_t pinModeRX(const gpio::Mode) override
+        {
+            return m5::hal::error::error_t::OK;
+        }
+        inline virtual m5::hal::error::error_t writeDigitalRX(const bool high) override
+        {
+            const uint8_t reg = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_RX);
+            uint8_t v[1]      = {high};
+            return AdapterI2C::I2CClassImpl::writeWithTransaction(reg, v, 1, true);
+        }
+        inline virtual m5::hal::error::error_t readDigitalRX(bool& high) override
+        {
+            return read_digital(high, IO_RX);
+        }
+        inline virtual m5::hal::error::error_t writeAnalogRX(const uint16_t v) override
+        {
+            return m5::hal::error::error_t::UNKNOWN_ERROR;
+        }
+        inline virtual m5::hal::error::error_t readAnalogRX(uint16_t& v)
+        {
+            const uint8_t reg = make_reg(READ_ANALOG_0_REG, _channel);
+            return reg ? read_register16LE(reg, v) : m5::hal::error::error_t::INVALID_ARGUMENT;
+        }
+        // TX
+        inline virtual m5::hal::error::error_t pinModeTX(const gpio::Mode) override
+        {
+            return m5::hal::error::error_t::OK;
+        }
+        inline virtual m5::hal::error::error_t writeDigitalTX(const bool high) override
+        {
+            const uint8_t reg = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_TX);
+            uint8_t v[1]      = {high};
+            return AdapterI2C::I2CClassImpl::writeWithTransaction(reg, v, 1, true);
+        }
+        inline virtual m5::hal::error::error_t readDigitalTX(bool& high) override
+        {
+            return read_digital(high, IO_TX);
+        }
+        inline virtual m5::hal::error::error_t writeAnalogTX(const uint16_t v) override
+        {
+            return m5::hal::error::error_t::UNKNOWN_ERROR;
+        }
+        inline virtual m5::hal::error::error_t readAnalogTX(uint16_t& v)
+        {
+            M5_LIB_LOGE("Cannot read analog1");
+            return m5::hal::error::error_t::UNKNOWN_ERROR;
+        }
+
+        // For write LED color
+        virtual m5::hal::error::error_t writeWithTransaction(const uint8_t* rgb888, const size_t len,
+                                                             const uint32_t stop) override
+        {
+            const uint8_t reg = LED_COLOR_SINGLE_REG + 0x40 + (0x10 * (_channel == 5 ? 6 : _channel));
+            const uint8_t* p  = rgb888;
+            for (uint_fast16_t i = 0; i < len / 3; ++i) {
+                std::array<uint8_t, 5> buf{};
+                buf[0]   = i & 0xFF;
+                buf[1]   = i >> 8;
+                buf[2]   = *p++;
+                buf[3]   = *p++;
+                buf[4]   = *p++;
+                auto ret = AdapterI2C::I2CClassImpl::writeWithTransaction(reg, buf.data(), buf.size(), stop);
+                if (ret != m5::hal::error::error_t::OK) {
+                    return ret;
+                }
+            }
+            return m5::hal::error::error_t::OK;
+        }
+
+    protected:
+        m5::hal::error::error_t write_digital(const uint8_t io, const uint8_t val)
+        {
+            const uint8_t reg = make_reg(WRITE_DIGITAL_0_REG, _channel, io);
+            return AdapterI2C::I2CClassImpl::writeWithTransaction(reg, &val, 1, true);
+        }
+        m5::hal::error::error_t read_digital(bool& high, const uint8_t io)
+        {
+            const uint8_t reg = make_reg(READ_DIGITAL_0_REG, _channel, io);
+            high              = true;
+            uint8_t v{};
+            auto err = read_register8(reg, v);
+            if (err == m5::hal::error::error_t::OK) {
+                high = v;
+            }
+            return err;
+        }
+        m5::hal::error::error_t read_register8(const uint8_t reg, uint8_t& v)
+        {
+            v        = 0;
+            auto err = AdapterI2C::I2CClassImpl::writeWithTransaction(reg, nullptr, 0U, true);
+            if (err == m5::hal::error::error_t::OK) {
+                uint8_t rbuf[1]{};
+                err = readWithTransaction(rbuf, 1);
+                if (err == m5::hal::error::error_t::OK) {
+                    v = rbuf[0];
+                }
+            }
+            return err;
+        }
+        m5::hal::error::error_t read_register16LE(const uint8_t reg, uint16_t& v)
+        {
+            v        = 0;
+            auto err = AdapterI2C::I2CClassImpl::writeWithTransaction(reg, nullptr, 0U, true);
+            if (err == m5::hal::error::error_t::OK) {
+                uint8_t rbuf[2]{};
+                err = readWithTransaction(rbuf, 2);
+                if (err == m5::hal::error::error_t::OK) {
+                    v = (rbuf[1] << 8) | rbuf[0];
+                }
+            }
+            return err;
+        }
+
+    private:
+        uint8_t _channel{};
+    };
+
 #if defined(ARDUINO)
     AdapterPbHub(TwoWire& wire, uint8_t addr, const uint32_t clock, const uint8_t ch) : AdapterI2C(wire, addr, clock)
     {
         _impl.reset(new PbHubWireImpl(wire, addr, clock, ch));
     }
 #endif
+    AdapterPbHub(m5::I2C_Class& i2c, const uint8_t addr, const uint32_t clock, const uint8_t ch)
+        : AdapterI2C(i2c, addr, clock)
+    {
+        _impl.reset(new PbHubI2CClassImpl(i2c, addr, clock, ch));
+    }
+    // M5HAL Bus version (SoftwareI2C etc.)
+    class PbHubBusImpl : public AdapterI2C::BusImpl {
+    public:
+        PbHubBusImpl(m5::hal::bus::Bus* bus, const uint8_t addr, const uint32_t clock, const uint8_t ch)
+            : AdapterI2C::BusImpl(bus, addr, clock), _channel{ch}
+        {
+        }
+
+        static constexpr uint8_t IO_RX{0};
+        static constexpr uint8_t IO_TX{1};
+
+        inline virtual m5::hal::error::error_t pinModeRX(const gpio::Mode) override
+        {
+            return m5::hal::error::error_t::OK;
+        }
+        inline virtual m5::hal::error::error_t writeDigitalRX(const bool high) override
+        {
+            const uint8_t reg = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_RX);
+            uint8_t v[1]      = {high};
+            return AdapterI2C::BusImpl::writeWithTransaction(reg, v, 1, true);
+        }
+        inline virtual m5::hal::error::error_t readDigitalRX(bool& high) override
+        {
+            return read_digital(high, IO_RX);
+        }
+        inline virtual m5::hal::error::error_t writeAnalogRX(const uint16_t v) override
+        {
+            return m5::hal::error::error_t::UNKNOWN_ERROR;
+        }
+        inline virtual m5::hal::error::error_t readAnalogRX(uint16_t& v)
+        {
+            const uint8_t reg = make_reg(READ_ANALOG_0_REG, _channel);
+            return reg ? read_register16LE(reg, v) : m5::hal::error::error_t::INVALID_ARGUMENT;
+        }
+        inline virtual m5::hal::error::error_t pinModeTX(const gpio::Mode) override
+        {
+            return m5::hal::error::error_t::OK;
+        }
+        inline virtual m5::hal::error::error_t writeDigitalTX(const bool high) override
+        {
+            const uint8_t reg = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_TX);
+            uint8_t v[1]      = {high};
+            return AdapterI2C::BusImpl::writeWithTransaction(reg, v, 1, true);
+        }
+        inline virtual m5::hal::error::error_t readDigitalTX(bool& high) override
+        {
+            return read_digital(high, IO_TX);
+        }
+        inline virtual m5::hal::error::error_t writeAnalogTX(const uint16_t v) override
+        {
+            return m5::hal::error::error_t::UNKNOWN_ERROR;
+        }
+        inline virtual m5::hal::error::error_t readAnalogTX(uint16_t& v)
+        {
+            M5_LIB_LOGE("Cannot read analog1");
+            return m5::hal::error::error_t::UNKNOWN_ERROR;
+        }
+
+        virtual m5::hal::error::error_t writeWithTransaction(const uint8_t* rgb888, const size_t len,
+                                                             const uint32_t stop) override
+        {
+            const uint8_t reg = LED_COLOR_SINGLE_REG + 0x40 + (0x10 * (_channel == 5 ? 6 : _channel));
+            const uint8_t* p  = rgb888;
+            for (uint_fast16_t i = 0; i < len / 3; ++i) {
+                std::array<uint8_t, 5> buf{};
+                buf[0]   = i & 0xFF;
+                buf[1]   = i >> 8;
+                buf[2]   = *p++;
+                buf[3]   = *p++;
+                buf[4]   = *p++;
+                auto ret = AdapterI2C::BusImpl::writeWithTransaction(reg, buf.data(), buf.size(), stop);
+                if (ret != m5::hal::error::error_t::OK) {
+                    return ret;
+                }
+            }
+            return m5::hal::error::error_t::OK;
+        }
+
+    protected:
+        m5::hal::error::error_t write_digital(const uint8_t io, const uint8_t val)
+        {
+            const uint8_t reg = make_reg(WRITE_DIGITAL_0_REG, _channel, io);
+            return AdapterI2C::BusImpl::writeWithTransaction(reg, &val, 1, true);
+        }
+        m5::hal::error::error_t read_digital(bool& high, const uint8_t io)
+        {
+            const uint8_t reg = make_reg(READ_DIGITAL_0_REG, _channel, io);
+            high              = true;
+            uint8_t v{};
+            auto err = read_register8(reg, v);
+            if (err == m5::hal::error::error_t::OK) {
+                high = v;
+            }
+            return err;
+        }
+        m5::hal::error::error_t read_register8(const uint8_t reg, uint8_t& v)
+        {
+            v        = 0;
+            auto err = AdapterI2C::BusImpl::writeWithTransaction(reg, nullptr, 0U, true);
+            if (err == m5::hal::error::error_t::OK) {
+                uint8_t rbuf[1]{};
+                err = readWithTransaction(rbuf, 1);
+                if (err == m5::hal::error::error_t::OK) {
+                    v = rbuf[0];
+                }
+            }
+            return err;
+        }
+        m5::hal::error::error_t read_register16LE(const uint8_t reg, uint16_t& v)
+        {
+            v        = 0;
+            auto err = AdapterI2C::BusImpl::writeWithTransaction(reg, nullptr, 0U, true);
+            if (err == m5::hal::error::error_t::OK) {
+                uint8_t rbuf[2]{};
+                err = readWithTransaction(rbuf, 2);
+                if (err == m5::hal::error::error_t::OK) {
+                    v = (rbuf[1] << 8) | rbuf[0];
+                }
+            }
+            return err;
+        }
+
+    private:
+        uint8_t _channel{};
+    };
+
     AdapterPbHub(m5::hal::bus::Bus* bus, const uint8_t addr, const uint32_t clock, const uint8_t ch)
         : AdapterI2C(bus, addr, clock)
     {
+        _impl.reset(new PbHubBusImpl(bus, addr, clock, ch));
     }
     AdapterPbHub(m5::hal::bus::Bus& bus, const uint8_t addr, const uint32_t clock, const uint8_t ch)
         : AdapterPbHub(&bus, addr, clock, ch)
@@ -222,7 +483,7 @@ bool UnitPbHub::begin()
     // Detect (retry for SoftwareI2C first-transaction NO_ACK)
     bool tmp{};
     bool detected{false};
-    for (uint8_t retry = 0; retry < 3; ++retry) {
+    for (uint8_t retry = 0; retry < 8; ++retry) {
         if (read_digital(0, 0, tmp)) {
             detected = true;
             break;
@@ -400,14 +661,18 @@ void UnitPbHub::wait_led_output(const uint16_t num_leds) const
 std::shared_ptr<Adapter> UnitPbHub::ensure_adapter(const uint8_t ch)
 {
     if (ch < MAX_CHANNEL) {
-        // Return new child adapter
         auto ad   = asAdapter<AdapterI2C>(Adapter::Type::I2C);
         auto impl = ad->impl();
-        if (impl->getWire()) {
-            return std::make_shared<AdapterPbHub>(*impl->getWire(), ad->address(), ad->clock(), ch);
-        } else {
-            // TODO Not implement
-            //    return std::make_shared<AdapterPbHub>(impl->getBus(), ad->address(), ad->clock(), ch);
+        switch (impl->implType()) {
+            case AdapterI2C::ImplType::TwoWire:
+                return std::make_shared<AdapterPbHub>(*impl->getWire(), ad->address(), ad->clock(), ch);
+            case AdapterI2C::ImplType::I2CClass:
+                return std::make_shared<AdapterPbHub>(*impl->getI2CClass(), ad->address(), ad->clock(), ch);
+            case AdapterI2C::ImplType::Bus:
+                return std::make_shared<AdapterPbHub>(impl->getBus(), ad->address(), ad->clock(), ch);
+            default:
+                M5_LIB_LOGE("Unsupported adapter type %u", (unsigned)impl->implType());
+                break;
         }
     } else {
         M5_LIB_LOGE("Invalid channel %u", ch);
