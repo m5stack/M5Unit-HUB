@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">M5Unit-HUB<span id="projectnumber">&#160;0.2.1 git rev:9518267</span>
+   <div id="projectname">M5Unit-HUB<span id="projectnumber">&#160;0.3.0 git rev:410cf46</span>
    </div>
   </td>
  </tr>
@@ -163,16 +163,16 @@ virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>begin</b> () 
 <tr><td colspan="2"><div class="groupText"><dl class="section warning"><dt>Warning</dt><dd>Function in v1.1 or later </dd></dl>
 </div></td></tr>
 <tr class="memitem:a7d0bee9821f909bc2c06a32c563d4f3c" id="r_a7d0bee9821f909bc2c06a32c563d4f3c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7d0bee9821f909bc2c06a32c563d4f3c">writePWM0</a> (const uint8_t ch, const uint8_t pwm)</td></tr>
-<tr class="memdesc:a7d0bee9821f909bc2c06a32c563d4f3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write PWN 0 to a specific channel.  <br /></td></tr>
+<tr class="memdesc:a7d0bee9821f909bc2c06a32c563d4f3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write PWM 0 to a specific channel.  <br /></td></tr>
 <tr class="separator:a7d0bee9821f909bc2c06a32c563d4f3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a872cb4ee5bedfdbb7c1e2c287ec7d079" id="r_a872cb4ee5bedfdbb7c1e2c287ec7d079"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a872cb4ee5bedfdbb7c1e2c287ec7d079">writePWM1</a> (const uint8_t ch, const uint8_t pwm)</td></tr>
-<tr class="memdesc:a872cb4ee5bedfdbb7c1e2c287ec7d079"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write PWN 1 to a specific channel.  <br /></td></tr>
+<tr class="memdesc:a872cb4ee5bedfdbb7c1e2c287ec7d079"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write PWM 1 to a specific channel.  <br /></td></tr>
 <tr class="separator:a872cb4ee5bedfdbb7c1e2c287ec7d079"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a06e8f2c7421a1d2a816a0675e2a71b9c" id="r_a06e8f2c7421a1d2a816a0675e2a71b9c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a06e8f2c7421a1d2a816a0675e2a71b9c">readPWM0</a> (uint8_t &amp;pwm, const uint8_t ch)</td></tr>
-<tr class="memdesc:a06e8f2c7421a1d2a816a0675e2a71b9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read PWN 0 from a specific channel.  <br /></td></tr>
+<tr class="memdesc:a06e8f2c7421a1d2a816a0675e2a71b9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read PWM 0 from a specific channel.  <br /></td></tr>
 <tr class="separator:a06e8f2c7421a1d2a816a0675e2a71b9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8dbd5ebbcc2612e919b72081362750f7" id="r_a8dbd5ebbcc2612e919b72081362750f7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8dbd5ebbcc2612e919b72081362750f7">readPWM1</a> (uint8_t &amp;pwm, const uint8_t ch)</td></tr>
-<tr class="memdesc:a8dbd5ebbcc2612e919b72081362750f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read PWN 0 from a specific channel.  <br /></td></tr>
+<tr class="memdesc:a8dbd5ebbcc2612e919b72081362750f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read PWM 1 from a specific channel.  <br /></td></tr>
 <tr class="separator:a8dbd5ebbcc2612e919b72081362750f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">LED</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><dl class="section warning"><dt>Warning</dt><dd>Function in v1.1 or later </dd></dl>
@@ -267,6 +267,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>write_servo_pulse</b>
 <tr class="memitem:a617990473c08a1b7145a4e3a1582aade" id="r_a617990473c08a1b7145a4e3a1582aade"><td class="memItemLeft" align="right" valign="top"><a id="a617990473c08a1b7145a4e3a1582aade" name="a617990473c08a1b7145a4e3a1582aade"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>read_servo_pulse</b> (const uint8_t ch, const uint8_t index, uint16_t &amp;angle)</td></tr>
 <tr class="separator:a617990473c08a1b7145a4e3a1582aade"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1db928d784a6163820047a7bac7a5038" id="r_a1db928d784a6163820047a7bac7a5038"><td class="memItemLeft" align="right" valign="top"><a id="a1db928d784a6163820047a7bac7a5038" name="a1db928d784a6163820047a7bac7a5038"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>wait_led_output</b> (const uint16_t num_leds) const</td></tr>
+<tr class="separator:a1db928d784a6163820047a7bac7a5038"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9269b1c232018318efb2cf6d414b80a4" id="r_a9269b1c232018318efb2cf6d414b80a4"><td class="memItemLeft" align="right" valign="top"><a id="a9269b1c232018318efb2cf6d414b80a4" name="a9269b1c232018318efb2cf6d414b80a4"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_firmware_2_or_later</b> () const</td></tr>
 <tr class="separator:a9269b1c232018318efb2cf6d414b80a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -313,7 +316,7 @@ but also depend on the timing of the Unit, PbHUB cannot be expanded. </dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if successful </dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Handling warning </dd>
+<dl class="section warning"><dt>Warning</dt><dd>The device must be re-initialized after changing the address </dd>
 <dd>
 Function in v1.1 or later </dd></dl>
 
@@ -587,7 +590,7 @@ Function in v1.1 or later </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Read PWN 0 from a specific channel. </p>
+<p>Read PWM 0 from a specific channel. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[out]</td><td class="paramname">pwm</td><td>PWM value </td></tr>
@@ -626,7 +629,7 @@ Function in v1.1 or later </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Read PWN 0 from a specific channel. </p>
+<p>Read PWM 1 from a specific channel. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[out]</td><td class="paramname">pwm</td><td>PWM value </td></tr>
@@ -1041,7 +1044,7 @@ Function in v1.1 or later </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">ch</td><td>Channel </td></tr>
-    <tr><td class="paramname">num</td><td>Number of th LED </td></tr>
+    <tr><td class="paramname">num</td><td>Number of the LEDs </td></tr>
   </table>
   </dd>
 </dl>
@@ -1106,7 +1109,7 @@ Function in PbHub v1.1 firmware version 2 or later </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Write PWN 0 to a specific channel. </p>
+<p>Write PWM 0 to a specific channel. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">ch</td><td>Channel </td></tr>
@@ -1145,7 +1148,7 @@ Function in PbHub v1.1 firmware version 2 or later </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Write PWN 1 to a specific channel. </p>
+<p>Write PWM 1 to a specific channel. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">ch</td><td>Channel </td></tr>
