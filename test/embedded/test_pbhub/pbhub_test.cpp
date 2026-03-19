@@ -7,42 +7,26 @@
   UnitTest for UnitPbHub
 */
 #include <gtest/gtest.h>
-#include <Wire.h>
 #include <M5Unified.h>
 #include <M5UnitUnified.hpp>
 #include <googletest/test_template.hpp>
 #include <unit/unit_PbHub.hpp>
-#include <random>
-#include <vector>
+#include <esp_random.h>
 
 using namespace m5::unit::googletest;
 using namespace m5::unit;
 using namespace m5::unit::pbhub;
 
-const ::testing::Environment* global_fixture = ::testing::AddGlobalTestEnvironment(new GlobalFixture<400000U>());
-
-class TestPbHub : public ComponentTestBase<UnitPbHub, bool> {
+class TestPbHub : public I2CComponentTestBase<UnitPbHub> {
 protected:
     virtual UnitPbHub* get_instance() override
     {
         auto ptr = new m5::unit::UnitPbHub();
         return ptr;
     }
-    virtual bool is_using_hal() const override
-    {
-        return GetParam();
-    };
 };
 
-// INSTANTIATE_TEST_SUITE_P(ParamValues, TestPbHub, ::testing::Values(false, true));
-// INSTANTIATE_TEST_SUITE_P(ParamValues, TestPbHub,::testing::Values(true));
-INSTANTIATE_TEST_SUITE_P(ParamValues, TestPbHub, ::testing::Values(false));
-
-namespace {
-auto rng = std::default_random_engine{};
-}
-
-TEST_P(TestPbHub, Digital)
+TEST_F(TestPbHub, Digital)
 {
     SCOPED_TRACE(ustr);
 
@@ -66,13 +50,13 @@ TEST_P(TestPbHub, Digital)
     }
 }
 
-TEST_P(TestPbHub, Analog)
+TEST_F(TestPbHub, Analog)
 {
     SCOPED_TRACE(ustr);
 
     auto ver = unit->firmwareVersion();
     bool can = ver == 0x00;  // PbHub
-    M5_LOGI("%02X writedAnalog %s", unit->firmwareVersion(), can ? "supported" : "NOT supported");
+    M5_LOGI("%02X writeAnalog %s", unit->firmwareVersion(), can ? "supported" : "NOT supported");
 
     for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
         auto s = m5::utility::formatString("CH:%u", ch);
@@ -87,7 +71,7 @@ TEST_P(TestPbHub, Analog)
             auto s = m5::utility::formatString("CH:%u", ch);
             SCOPED_TRACE(s);
 
-            uint8_t v = rng() & 0xFF;
+            uint8_t v = esp_random() & 0xFF;
             EXPECT_TRUE(unit->writeAnalog0(ch, v));
             EXPECT_TRUE(unit->writeAnalog1(ch, v));
         }
@@ -96,18 +80,18 @@ TEST_P(TestPbHub, Analog)
             auto s = m5::utility::formatString("CH:%u", ch);
             SCOPED_TRACE(s);
 
-            uint8_t v = rng() & 0xFF;
+            uint8_t v = esp_random() & 0xFF;
             EXPECT_FALSE(unit->writeAnalog0(ch, v));
             EXPECT_FALSE(unit->writeAnalog1(ch, v));
         }
 }
 
-TEST_P(TestPbHub, PWM)
+TEST_F(TestPbHub, PWM)
 {
     SCOPED_TRACE(ustr);
 
     auto ver = unit->firmwareVersion();
-    bool can = ver != 0xFF && ver;  // PbHuub  v1.1
+    bool can = ver != 0xFF && ver;  // PbHub v1.1
     M5_LOGI("%02X PWM %s", unit->firmwareVersion(), can ? "supported" : "NOT supported");
 
     if (can) {
@@ -115,7 +99,7 @@ TEST_P(TestPbHub, PWM)
             auto s = m5::utility::formatString("CH:%u", ch);
             SCOPED_TRACE(s);
 
-            uint8_t out = rng() & 0xFF;
+            uint8_t out = esp_random() & 0xFF;
             uint8_t v{};
             EXPECT_TRUE(unit->writePWM0(ch, out));
             EXPECT_TRUE(unit->writePWM1(ch, out));
@@ -128,7 +112,7 @@ TEST_P(TestPbHub, PWM)
             auto s = m5::utility::formatString("CH:%u", ch);
             SCOPED_TRACE(s);
 
-            uint8_t out = rng() & 0xFF;
+            uint8_t out = esp_random() & 0xFF;
             uint8_t v{};
             EXPECT_FALSE(unit->writePWM0(ch, out));
             EXPECT_FALSE(unit->writePWM1(ch, out));
@@ -139,12 +123,12 @@ TEST_P(TestPbHub, PWM)
     }
 }
 
-TEST_P(TestPbHub, LED)
+TEST_F(TestPbHub, LED)
 {
     SCOPED_TRACE(ustr);
 
     auto ver = unit->firmwareVersion();
-    bool can = ver != 0xFF && ver >= 2;  // PbHuub  v1.1 FW 2 or later
+    bool can = ver != 0xFF && ver >= 2;  // PbHub v1.1 FW 2 or later
     M5_LOGI("%02X LED mode %s", unit->firmwareVersion(), can ? "supported" : "NOT supported");
 
     for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
@@ -157,7 +141,7 @@ TEST_P(TestPbHub, LED)
         EXPECT_TRUE(unit->writeLEDCount(ch, UnitPbHub::MAX_LED_COUNT));
     }
 
-    const uint32_t color = rng();
+    const uint32_t color = esp_random();
     for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
         auto s = m5::utility::formatString("CH:%u", ch);
         SCOPED_TRACE(s);
@@ -188,7 +172,7 @@ TEST_P(TestPbHub, LED)
 
         EXPECT_TRUE(unit->writeLEDBrightness(ch, 0));
         EXPECT_TRUE(unit->writeLEDBrightness(ch, 255));
-        uint8_t br = rng();
+        uint8_t br = esp_random();
         EXPECT_TRUE(unit->writeLEDBrightness(ch, br)) << br;
     }
 
@@ -224,10 +208,10 @@ TEST_P(TestPbHub, LED)
     }
 }
 
-TEST_P(TestPbHub, Servo)
+TEST_F(TestPbHub, Servo)
 {
     auto ver = unit->firmwareVersion();
-    bool can = ver != 0xFF && ver;  // PbHuub  v1.1
+    bool can = ver != 0xFF && ver;  // PbHub v1.1
     M5_LOGI("%02X Servo %s", unit->firmwareVersion(), can ? "supported" : "NOT supported");
 
     if (can) {
@@ -314,7 +298,7 @@ TEST_P(TestPbHub, Servo)
     }
 }
 
-TEST_P(TestPbHub, ChageI2CAddress)
+TEST_F(TestPbHub, ChangeI2CAddress)
 {
     SCOPED_TRACE(ustr);
 

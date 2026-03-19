@@ -26,7 +26,7 @@ namespace pbhub {
 
 /*!
   @enum LEDMode
-  @brief LED contol type
+  @brief LED control type
  */
 enum class LEDMode : uint8_t {
     WS28xx,  //!< WS28xx, SK6812 (as default)
@@ -134,7 +134,7 @@ public:
      */
     inline bool writeAnalog1(const uint8_t ch, const uint8_t val)
     {
-        return write_analog(ch, 0, val);
+        return write_analog(ch, 1, val);
     }
     ///@}
 
@@ -153,7 +153,7 @@ public:
     ///@name PWM
     ///@{
     /*!
-      @brief Write PWN 0 to a specific channel
+      @brief Write PWM 0 to a specific channel
       @param ch Channel
       @param pwm PWM value
       @return True if successful
@@ -163,7 +163,7 @@ public:
         return write_pwm(ch, 0, pwm);
     }
     /*!
-      @brief Write PWN 1 to a specific channel
+      @brief Write PWM 1 to a specific channel
       @param ch Channel
       @param pwm PWM value
       @return True if successful
@@ -173,7 +173,7 @@ public:
         return write_pwm(ch, 1, pwm);
     }
     /*!
-      @brief Read PWN 0 from a specific channel
+      @brief Read PWM 0 from a specific channel
       @param[out] pwm PWM value
       @param ch Channel
       @return True if successful
@@ -183,7 +183,7 @@ public:
         return read_pwm(ch, 0, pwm);
     }
     /*!
-      @brief Read PWN 0 from a specific channel
+      @brief Read PWM 1 from a specific channel
       @param[out] pwm PWM value
       @param ch Channel
       @return True if successful
@@ -200,7 +200,7 @@ public:
     /*!
       @brief Write the number of the LED to a specific channel
       @param ch Channel
-      @param num Number of th LED
+      @param num Number of the LEDs
       @return True if successful
       @warning Maximum LED is 74 for each channel
      */
@@ -345,7 +345,7 @@ public:
       @brief Change device I2C address
       @param addr I2C address
       @return True if successful
-      @warning Handling warning
+      @warning The device must be re-initialized after changing the address
       @warning Function in v1.1 or later
     */
     bool changeI2CAddress(const uint8_t addr);
@@ -362,6 +362,7 @@ protected:
     bool read_servo_angle(const uint8_t ch, const uint8_t index, uint8_t& angle);
     bool write_servo_pulse(const uint8_t ch, const uint8_t index, const uint16_t angle);
     bool read_servo_pulse(const uint8_t ch, const uint8_t index, uint16_t& angle);
+    void wait_led_output(const uint16_t num_leds) const;
 
     inline bool is_firmware_2_or_later() const
     {

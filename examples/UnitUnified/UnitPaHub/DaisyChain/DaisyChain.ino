@@ -11,7 +11,7 @@
   Note for ArduinoIDE
   Install the necessary unit libraries according to the units used in example.
   (This example requires the M5Unit-METER library)
-  See alse main/DaisyChain.cpp
+  See also main/DaisyChain.cpp
 *********************************************************************************************
 */
 #include "main/DaisyChain.cpp"

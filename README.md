@@ -29,7 +29,7 @@ See also examples using conventional methods here.
 
 - [Unit PaHub v2.0 - Document & Datasheet](https://docs.m5stack.com/en/unit/pahub2)
 - [Unit PaHub v2.1 - Document & Datasheet](https://docs.m5stack.com/en/unit/Unit-PaHub%20v2.1)
-- [Unit PbHub v1.1 - Document & Datasheet](https://docs.m5stack.com/ja/unit/pbhub_1.1)
+- [Unit PbHub v1.1 - Document & Datasheet](https://docs.m5stack.com/en/unit/pbhub_1.1)
 
 ## Required Libraries:
 
@@ -39,7 +39,7 @@ See also examples using conventional methods here.
 
 ## License
 
-- [M5Unit-HUB- MIT](LICENSE)
+- [M5Unit-HUB - MIT](LICENSE)
 
 ## Examples
 See also [examples/UnitUnified](examples/UnitUnified)
