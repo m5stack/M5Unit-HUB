@@ -17,8 +17,8 @@ on:
       - 'examples/UnitUnified/**.hpp'
       - 'examples/UnitUnified/**.h'
       - 'examples/UnitUnified/**.c'
-      - '**/platformio-build-check.yml'
-      - '**platformio.ini'
+      - '.github/workflows/platformio-build-check.yml'
+      - 'platformio.ini'
   pull_request:
     paths:
       - 'src/unit/**.cpp'
@@ -30,8 +30,8 @@ on:
       - 'examples/UnitUnified/**.hpp'
       - 'examples/UnitUnified/**.h'
       - 'examples/UnitUnified/**.c'
-      - '**/platformio-build-check.yml'
-      - '**platformio.ini'
+      - '.github/workflows/platformio-build-check.yml'
+      - 'platformio.ini'
   workflow_dispatch:
 
 defaults:
