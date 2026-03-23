@@ -18,7 +18,7 @@
 
 /*!
   @namespace m5
-  @brief Top level namespace of M5stack
+  @brief Top level namespace of M5Stack
  */
 namespace m5 {
 
@@ -28,8 +28,8 @@ namespace m5 {
  */
 namespace unit {
 
-using UnitPaHub  = m5::unit::UnitPCA9548AP;  // TCA9548 and PCA9548 are compatible
-using UnitPaHub2 = m5::unit::UnitPCA9548AP;  // Include PaHub v2.0 and PaHub v2.1
+using UnitPaHub  = m5::unit::UnitPCA9548AP;  //!< @brief Type alias for PaHub (TCA9548/PCA9548 compatible)
+using UnitPaHub2 = m5::unit::UnitPCA9548AP;  //!< @brief Type alias for PaHub2 (v2.0 and v2.1)
 
 }  // namespace unit
 }  // namespace m5

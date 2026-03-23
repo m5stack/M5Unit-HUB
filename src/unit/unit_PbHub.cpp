@@ -105,7 +105,7 @@ public:
         {
             return m5::hal::error::error_t::UNKNOWN_ERROR;
         }
-        inline virtual m5::hal::error::error_t readAnalogRX(uint16_t& v)
+        inline virtual m5::hal::error::error_t readAnalogRX(uint16_t& v) override
         {
             const uint8_t reg = make_reg(READ_ANALOG_0_REG, _channel);
             return reg ? read_register16LE(reg, v) : m5::hal::error::error_t::INVALID_ARGUMENT;
@@ -129,7 +129,7 @@ public:
         {
             return m5::hal::error::error_t::UNKNOWN_ERROR;
         }
-        inline virtual m5::hal::error::error_t readAnalogTX(uint16_t& v)
+        inline virtual m5::hal::error::error_t readAnalogTX(uint16_t& v) override
         {
             M5_LIB_LOGE("Cannot read analog1");
             return m5::hal::error::error_t::UNKNOWN_ERROR;
@@ -218,7 +218,7 @@ public:
         {
             return m5::hal::error::error_t::UNKNOWN_ERROR;
         }
-        inline virtual m5::hal::error::error_t readAnalogRX(uint16_t& v)
+        inline virtual m5::hal::error::error_t readAnalogRX(uint16_t& v) override
         {
             const uint8_t reg = make_reg(READ_ANALOG_0_REG, _channel);
             return reg ? read_register16LE(reg, v) : m5::hal::error::error_t::INVALID_ARGUMENT;
@@ -242,7 +242,7 @@ public:
         {
             return m5::hal::error::error_t::UNKNOWN_ERROR;
         }
-        inline virtual m5::hal::error::error_t readAnalogTX(uint16_t& v)
+        inline virtual m5::hal::error::error_t readAnalogTX(uint16_t& v) override
         {
             M5_LIB_LOGE("Cannot read analog1");
             return m5::hal::error::error_t::UNKNOWN_ERROR;
@@ -357,7 +357,7 @@ public:
         {
             return m5::hal::error::error_t::UNKNOWN_ERROR;
         }
-        inline virtual m5::hal::error::error_t readAnalogRX(uint16_t& v)
+        inline virtual m5::hal::error::error_t readAnalogRX(uint16_t& v) override
         {
             const uint8_t reg = make_reg(READ_ANALOG_0_REG, _channel);
             return reg ? read_register16LE(reg, v) : m5::hal::error::error_t::INVALID_ARGUMENT;
@@ -380,7 +380,7 @@ public:
         {
             return m5::hal::error::error_t::UNKNOWN_ERROR;
         }
-        inline virtual m5::hal::error::error_t readAnalogTX(uint16_t& v)
+        inline virtual m5::hal::error::error_t readAnalogTX(uint16_t& v) override
         {
             M5_LIB_LOGE("Cannot read analog1");
             return m5::hal::error::error_t::UNKNOWN_ERROR;
@@ -522,6 +522,9 @@ bool UnitPbHub::readAnalog0(uint16_t& val, const uint8_t ch)
 
 bool UnitPbHub::writeLEDCount(const uint8_t ch, const uint16_t num)
 {
+    if (ch >= MAX_CHANNEL) {
+        return false;
+    }
     if (num > MAX_LED_COUNT) {
         M5_LIB_LOGE("Too many LEDs %u/%u", num, MAX_LED_COUNT);
         return false;
@@ -564,7 +567,7 @@ bool UnitPbHub::writeLEDColor(const uint8_t ch, const uint16_t index, const uint
 bool UnitPbHub::fillLEDColor(const uint8_t ch, const uint32_t rgb888, const uint16_t first, const uint16_t count)
 {
     const uint8_t reg  = make_reg(LED_COLOR_MORE_REG, ch);
-    const uint16_t num = count ? count : (ch < MAX_CHANNEL) ? (_numLED[ch] - first) : 0;
+    const uint16_t num = count ? count : (ch < MAX_CHANNEL && _numLED[ch] > first) ? (_numLED[ch] - first) : 0;
 
     if (first + num > MAX_LED_COUNT) {
         M5_LIB_LOGE("Too many LEDs %u-%u/%u", first, count, MAX_LED_COUNT);
