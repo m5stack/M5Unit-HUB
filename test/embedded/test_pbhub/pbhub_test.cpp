@@ -48,6 +48,10 @@ TEST_F(TestPbHub, Digital)
         EXPECT_TRUE(unit->readDigital0(b0, ch));
         EXPECT_TRUE(unit->readDigital1(b1, ch));
     }
+
+    // Out of range
+    EXPECT_FALSE(unit->writeDigital0(UnitPbHub::MAX_CHANNEL, true));
+    EXPECT_FALSE(unit->writeDigital0(255, true));
 }
 
 TEST_F(TestPbHub, Analog)
@@ -68,22 +72,23 @@ TEST_F(TestPbHub, Analog)
 
     if (can) {
         for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
-            auto s = m5::utility::formatString("CH:%u", ch);
+            uint8_t v = esp_random() & 0xFF;
+            auto s = m5::utility::formatString("CH:%u v:%02X", ch, v);
             SCOPED_TRACE(s);
 
-            uint8_t v = esp_random() & 0xFF;
             EXPECT_TRUE(unit->writeAnalog0(ch, v));
             EXPECT_TRUE(unit->writeAnalog1(ch, v));
         }
-    } else
+    } else {
         for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
-            auto s = m5::utility::formatString("CH:%u", ch);
+            uint8_t v = esp_random() & 0xFF;
+            auto s = m5::utility::formatString("CH:%u v:%02X", ch, v);
             SCOPED_TRACE(s);
 
-            uint8_t v = esp_random() & 0xFF;
             EXPECT_FALSE(unit->writeAnalog0(ch, v));
             EXPECT_FALSE(unit->writeAnalog1(ch, v));
         }
+    }
 }
 
 TEST_F(TestPbHub, PWM)
@@ -96,23 +101,25 @@ TEST_F(TestPbHub, PWM)
 
     if (can) {
         for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
-            auto s = m5::utility::formatString("CH:%u", ch);
+            uint8_t out = esp_random() & 0xFF;
+            auto s = m5::utility::formatString("CH:%u out:%02X", ch, out);
             SCOPED_TRACE(s);
 
-            uint8_t out = esp_random() & 0xFF;
             uint8_t v{};
             EXPECT_TRUE(unit->writePWM0(ch, out));
-            EXPECT_TRUE(unit->writePWM1(ch, out));
-
             EXPECT_TRUE(unit->readPWM0(v, ch));
+            EXPECT_EQ(v, out);
+
+            EXPECT_TRUE(unit->writePWM1(ch, out));
             EXPECT_TRUE(unit->readPWM1(v, ch));
+            EXPECT_EQ(v, out);
         }
     } else {
         for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
-            auto s = m5::utility::formatString("CH:%u", ch);
+            uint8_t out = esp_random() & 0xFF;
+            auto s = m5::utility::formatString("CH:%u out:%02X", ch, out);
             SCOPED_TRACE(s);
 
-            uint8_t out = esp_random() & 0xFF;
             uint8_t v{};
             EXPECT_FALSE(unit->writePWM0(ch, out));
             EXPECT_FALSE(unit->writePWM1(ch, out));
@@ -142,6 +149,10 @@ TEST_F(TestPbHub, LED)
     }
 
     const uint32_t color = esp_random();
+    {
+        auto s = m5::utility::formatString("color:%08X", color);
+        SCOPED_TRACE(s);
+    }
     for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
         auto s = m5::utility::formatString("CH:%u", ch);
         SCOPED_TRACE(s);
@@ -210,6 +221,7 @@ TEST_F(TestPbHub, LED)
 
 TEST_F(TestPbHub, Servo)
 {
+    SCOPED_TRACE(ustr);
     auto ver = unit->firmwareVersion();
     bool can = ver != 0xFF && ver;  // PbHub v1.1
     M5_LOGI("%02X Servo %s", unit->firmwareVersion(), can ? "supported" : "NOT supported");
@@ -249,10 +261,21 @@ TEST_F(TestPbHub, Servo)
 
             uint8_t a{};
             uint16_t p{};
+            EXPECT_TRUE(unit->writeServo0Angle(ch, 90));
             EXPECT_TRUE(unit->readServo0Angle(a, ch));
+            EXPECT_EQ(a, 90);
+
+            EXPECT_TRUE(unit->writeServo1Angle(ch, 45));
             EXPECT_TRUE(unit->readServo1Angle(a, ch));
+            EXPECT_EQ(a, 45);
+
+            EXPECT_TRUE(unit->writeServo0Pulse(ch, 1500));
             EXPECT_TRUE(unit->readServo0Pulse(p, ch));
+            EXPECT_EQ(p, 1500);
+
+            EXPECT_TRUE(unit->writeServo1Pulse(ch, 2000));
             EXPECT_TRUE(unit->readServo1Pulse(p, ch));
+            EXPECT_EQ(p, 2000);
         }
     } else {
         for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
