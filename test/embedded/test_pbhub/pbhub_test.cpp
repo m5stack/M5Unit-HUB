@@ -73,7 +73,7 @@ TEST_F(TestPbHub, Analog)
     if (can) {
         for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
             uint8_t v = esp_random() & 0xFF;
-            auto s = m5::utility::formatString("CH:%u v:%02X", ch, v);
+            auto s    = m5::utility::formatString("CH:%u v:%02X", ch, v);
             SCOPED_TRACE(s);
 
             EXPECT_TRUE(unit->writeAnalog0(ch, v));
@@ -82,7 +82,7 @@ TEST_F(TestPbHub, Analog)
     } else {
         for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
             uint8_t v = esp_random() & 0xFF;
-            auto s = m5::utility::formatString("CH:%u v:%02X", ch, v);
+            auto s    = m5::utility::formatString("CH:%u v:%02X", ch, v);
             SCOPED_TRACE(s);
 
             EXPECT_FALSE(unit->writeAnalog0(ch, v));
@@ -102,7 +102,7 @@ TEST_F(TestPbHub, PWM)
     if (can) {
         for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
             uint8_t out = esp_random() & 0xFF;
-            auto s = m5::utility::formatString("CH:%u out:%02X", ch, out);
+            auto s      = m5::utility::formatString("CH:%u out:%02X", ch, out);
             SCOPED_TRACE(s);
 
             uint8_t v{};
@@ -117,7 +117,7 @@ TEST_F(TestPbHub, PWM)
     } else {
         for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
             uint8_t out = esp_random() & 0xFF;
-            auto s = m5::utility::formatString("CH:%u out:%02X", ch, out);
+            auto s      = m5::utility::formatString("CH:%u out:%02X", ch, out);
             SCOPED_TRACE(s);
 
             uint8_t v{};

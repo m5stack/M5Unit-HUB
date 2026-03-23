@@ -50,8 +50,8 @@ class UnitPbHub : public Component {
     M5_UNIT_COMPONENT_HPP_BUILDER(UnitPbHub, 0x61);
 
 public:
-    constexpr static uint8_t MAX_CHANNEL{6};      //!< @brief Maximum number of channels
-    constexpr static uint8_t MAX_LED_COUNT{74};   //!< @brief Maximum number of LEDs per channel
+    constexpr static uint8_t MAX_CHANNEL{6};     //!< @brief Maximum number of channels
+    constexpr static uint8_t MAX_LED_COUNT{74};  //!< @brief Maximum number of LEDs per channel
 
     //! @brief Constructor
     //! @param addr I2C address
