@@ -30,3 +30,18 @@
 *.exe
 *.out
 *.app
+
+# PlatformIO
+.pio/
+
+# IDE
+.vscode/
+
+# Doxygen
+docs/html/
+
+# macOS
+.DS_Store
+
+# Temporary
+tmp/
