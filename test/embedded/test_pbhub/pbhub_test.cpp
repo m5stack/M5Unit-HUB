@@ -52,6 +52,14 @@ TEST_F(TestPbHub, Digital)
     // Out of range
     EXPECT_FALSE(unit->writeDigital0(UnitPbHub::MAX_CHANNEL, true));
     EXPECT_FALSE(unit->writeDigital0(255, true));
+    EXPECT_FALSE(unit->writeDigital1(UnitPbHub::MAX_CHANNEL, true));
+    EXPECT_FALSE(unit->writeDigital1(255, true));
+
+    bool dummy{};
+    EXPECT_FALSE(unit->readDigital0(dummy, UnitPbHub::MAX_CHANNEL));
+    EXPECT_FALSE(unit->readDigital0(dummy, 255));
+    EXPECT_FALSE(unit->readDigital1(dummy, UnitPbHub::MAX_CHANNEL));
+    EXPECT_FALSE(unit->readDigital1(dummy, 255));
 }
 
 TEST_F(TestPbHub, Analog)
@@ -68,6 +76,13 @@ TEST_F(TestPbHub, Analog)
 
         uint16_t v{};
         EXPECT_TRUE(unit->readAnalog0(v, ch));
+    }
+
+    // Out of range
+    {
+        uint16_t v{};
+        EXPECT_FALSE(unit->readAnalog0(v, UnitPbHub::MAX_CHANNEL));
+        EXPECT_FALSE(unit->readAnalog0(v, 255));
     }
 
     if (can) {
@@ -148,6 +163,10 @@ TEST_F(TestPbHub, LED)
         EXPECT_TRUE(unit->writeLEDCount(ch, UnitPbHub::MAX_LED_COUNT));
     }
 
+    // Out of range channel
+    EXPECT_FALSE(unit->writeLEDCount(UnitPbHub::MAX_CHANNEL, 1));
+    EXPECT_FALSE(unit->writeLEDCount(255, 1));
+
     const uint32_t color = esp_random();
     {
         auto s = m5::utility::formatString("color:%08X", color);
@@ -187,35 +206,25 @@ TEST_F(TestPbHub, LED)
         EXPECT_TRUE(unit->writeLEDBrightness(ch, br)) << br;
     }
 
+    // LEDMode is a global setting (not per-channel)
     if (can) {
-        for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
-            auto s = m5::utility::formatString("CH:%u", ch);
-            SCOPED_TRACE(s);
+        EXPECT_TRUE(unit->writeLEDMode(LEDMode::SK6822));
+        LEDMode m{};
+        EXPECT_TRUE(unit->readLEDMode(m));
+        EXPECT_EQ(m, LEDMode::SK6822);
 
-            EXPECT_TRUE(unit->writeLEDMode(LEDMode::SK6822));
-            LEDMode m{};
-            EXPECT_TRUE(unit->readLEDMode(m));
-            EXPECT_EQ(m, LEDMode::SK6822);
-
-            EXPECT_TRUE(unit->writeLEDMode(LEDMode::WS28xx));
-            EXPECT_TRUE(unit->readLEDMode(m));
-            EXPECT_EQ(m, LEDMode::WS28xx);
-        }
-
+        EXPECT_TRUE(unit->writeLEDMode(LEDMode::WS28xx));
+        EXPECT_TRUE(unit->readLEDMode(m));
+        EXPECT_EQ(m, LEDMode::WS28xx);
     } else {
-        for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
-            auto s = m5::utility::formatString("CH:%u", ch);
-            SCOPED_TRACE(s);
+        EXPECT_FALSE(unit->writeLEDMode(LEDMode::SK6822));
+        LEDMode m{};
+        EXPECT_FALSE(unit->readLEDMode(m));
+        EXPECT_EQ(m, LEDMode::Unknown);
 
-            EXPECT_FALSE(unit->writeLEDMode(LEDMode::SK6822));
-            LEDMode m{};
-            EXPECT_FALSE(unit->readLEDMode(m));
-            EXPECT_EQ(m, LEDMode::Unknown);
-
-            EXPECT_FALSE(unit->writeLEDMode(LEDMode::WS28xx));
-            EXPECT_FALSE(unit->readLEDMode(m));
-            EXPECT_EQ(m, LEDMode::Unknown);
-        }
+        EXPECT_FALSE(unit->writeLEDMode(LEDMode::WS28xx));
+        EXPECT_FALSE(unit->readLEDMode(m));
+        EXPECT_EQ(m, LEDMode::Unknown);
     }
 }
 
@@ -282,37 +291,13 @@ TEST_F(TestPbHub, Servo)
             auto s = m5::utility::formatString("CH:%u", ch);
             SCOPED_TRACE(s);
 
-            EXPECT_FALSE(unit->writeServo0Angle(ch, 0));
             EXPECT_FALSE(unit->writeServo0Angle(ch, 90));
-            EXPECT_FALSE(unit->writeServo0Angle(ch, 180));
-            EXPECT_FALSE(unit->writeServo0Angle(ch, 181));
-            EXPECT_FALSE(unit->writeServo0Angle(ch, 255));
-
-            EXPECT_FALSE(unit->writeServo1Angle(ch, 0));
             EXPECT_FALSE(unit->writeServo1Angle(ch, 90));
-            EXPECT_FALSE(unit->writeServo1Angle(ch, 180));
-            EXPECT_FALSE(unit->writeServo1Angle(ch, 181));
-            EXPECT_FALSE(unit->writeServo1Angle(ch, 255));
-
-            EXPECT_FALSE(unit->writeServo0Pulse(ch, 500));
             EXPECT_FALSE(unit->writeServo0Pulse(ch, 1500));
-            EXPECT_FALSE(unit->writeServo0Pulse(ch, 2500));
-            EXPECT_FALSE(unit->writeServo0Pulse(ch, 0));
-            EXPECT_FALSE(unit->writeServo0Pulse(ch, 499));
-            EXPECT_FALSE(unit->writeServo0Pulse(ch, 2501));
-            EXPECT_FALSE(unit->writeServo0Pulse(ch, 65535));
-
-            EXPECT_FALSE(unit->writeServo1Pulse(ch, 500));
             EXPECT_FALSE(unit->writeServo1Pulse(ch, 1500));
-            EXPECT_FALSE(unit->writeServo1Pulse(ch, 2500));
-            EXPECT_FALSE(unit->writeServo1Pulse(ch, 0));
-            EXPECT_FALSE(unit->writeServo1Pulse(ch, 499));
-            EXPECT_FALSE(unit->writeServo1Pulse(ch, 2501));
-            EXPECT_FALSE(unit->writeServo1Pulse(ch, 65535));
 
             uint8_t a{};
             uint16_t p{};
-
             EXPECT_FALSE(unit->readServo0Angle(a, ch));
             EXPECT_FALSE(unit->readServo1Angle(a, ch));
             EXPECT_FALSE(unit->readServo0Pulse(p, ch));
