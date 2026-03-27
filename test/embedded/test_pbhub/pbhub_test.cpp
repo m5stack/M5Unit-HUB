@@ -143,6 +143,19 @@ TEST_F(TestPbHub, PWM)
             EXPECT_FALSE(unit->readPWM1(v, ch));
         }
     }
+
+    // Out of range channel
+    {
+        uint8_t v{};
+        EXPECT_FALSE(unit->writePWM0(UnitPbHub::MAX_CHANNEL, 0));
+        EXPECT_FALSE(unit->writePWM0(255, 0));
+        EXPECT_FALSE(unit->writePWM1(UnitPbHub::MAX_CHANNEL, 0));
+        EXPECT_FALSE(unit->writePWM1(255, 0));
+        EXPECT_FALSE(unit->readPWM0(v, UnitPbHub::MAX_CHANNEL));
+        EXPECT_FALSE(unit->readPWM0(v, 255));
+        EXPECT_FALSE(unit->readPWM1(v, UnitPbHub::MAX_CHANNEL));
+        EXPECT_FALSE(unit->readPWM1(v, 255));
+    }
 }
 
 TEST_F(TestPbHub, LED)
@@ -303,6 +316,28 @@ TEST_F(TestPbHub, Servo)
             EXPECT_FALSE(unit->readServo0Pulse(p, ch));
             EXPECT_FALSE(unit->readServo1Pulse(p, ch));
         }
+    }
+
+    // Out of range channel
+    {
+        uint8_t a{};
+        uint16_t p{};
+        EXPECT_FALSE(unit->writeServo0Angle(UnitPbHub::MAX_CHANNEL, 90));
+        EXPECT_FALSE(unit->writeServo0Angle(255, 90));
+        EXPECT_FALSE(unit->writeServo1Angle(UnitPbHub::MAX_CHANNEL, 90));
+        EXPECT_FALSE(unit->writeServo1Angle(255, 90));
+        EXPECT_FALSE(unit->writeServo0Pulse(UnitPbHub::MAX_CHANNEL, 1500));
+        EXPECT_FALSE(unit->writeServo0Pulse(255, 1500));
+        EXPECT_FALSE(unit->writeServo1Pulse(UnitPbHub::MAX_CHANNEL, 1500));
+        EXPECT_FALSE(unit->writeServo1Pulse(255, 1500));
+        EXPECT_FALSE(unit->readServo0Angle(a, UnitPbHub::MAX_CHANNEL));
+        EXPECT_FALSE(unit->readServo0Angle(a, 255));
+        EXPECT_FALSE(unit->readServo1Angle(a, UnitPbHub::MAX_CHANNEL));
+        EXPECT_FALSE(unit->readServo1Angle(a, 255));
+        EXPECT_FALSE(unit->readServo0Pulse(p, UnitPbHub::MAX_CHANNEL));
+        EXPECT_FALSE(unit->readServo0Pulse(p, 255));
+        EXPECT_FALSE(unit->readServo1Pulse(p, UnitPbHub::MAX_CHANNEL));
+        EXPECT_FALSE(unit->readServo1Pulse(p, 255));
     }
 }
 

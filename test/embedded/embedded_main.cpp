@@ -30,8 +30,6 @@ void test()
 
 void setup()
 {
-    delay(1500);
-
     M5.begin();
 
     M5_LOGI("CPP %ld", __cplusplus);
@@ -40,7 +38,7 @@ void setup()
     M5_LOGI("BOARD:%X", M5.getBoard());
     M5_LOGI("Heap: %u", esp_get_free_heap_size());
 
-    lcd.clear(TFT_DARKGRAY);
+    lcd.fillScreen(TFT_DARKGRAY);
     ::testing::InitGoogleTest();
 
 #ifdef GTEST_FILTER
