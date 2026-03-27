@@ -12,10 +12,10 @@ on:
     branches:
       - '*'
     paths:
-      - 'src/unit/**.cpp'
-      - 'src/unit/**.hpp'
-      - 'src/unit/**.h'
-      - 'src/unit/**.c'
+      - 'src/**.cpp'
+      - 'src/**.hpp'
+      - 'src/**.h'
+      - 'src/**.c'
       - 'examples/UnitUnified/**.ino'
       - 'examples/UnitUnified/**.cpp'
       - 'examples/UnitUnified/**.hpp'
@@ -24,10 +24,10 @@ on:
       - '.github/workflows/arduino-esp-v2-build-check.yml'
   pull_request:
     paths:
-      - 'src/unit/**.cpp'
-      - 'src/unit/**.hpp'
-      - 'src/unit/**.h'
-      - 'src/unit/**.c'
+      - 'src/**.cpp'
+      - 'src/**.hpp'
+      - 'src/**.h'
+      - 'src/**.c'
       - 'examples/UnitUnified/**.ino'
       - 'examples/UnitUnified/**.cpp'
       - 'examples/UnitUnified/**.hpp'
