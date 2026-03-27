@@ -93,8 +93,8 @@ public:
         }
         inline virtual m5::hal::error::error_t writeDigitalRX(const bool high) override
         {
-            const uint8_t reg = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_RX);
-            uint8_t v[1]      = {high};
+            const uint8_t reg  = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_RX);
+            const uint8_t v[1] = {high};
             return AdapterI2C::WireImpl::writeWithTransaction(reg, v, 1, true);
         }
         inline virtual m5::hal::error::error_t readDigitalRX(bool& high) override
@@ -117,8 +117,8 @@ public:
         }
         inline virtual m5::hal::error::error_t writeDigitalTX(const bool high) override
         {
-            const uint8_t reg = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_TX);
-            uint8_t v[1]      = {high};
+            const uint8_t reg  = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_TX);
+            const uint8_t v[1] = {high};
             return AdapterI2C::WireImpl::writeWithTransaction(reg, v, 1, true);
         }
         inline virtual m5::hal::error::error_t readDigitalTX(bool& high) override
@@ -172,13 +172,13 @@ public:
         }
         m5::hal::error::error_t read_register16LE(const uint8_t reg, uint16_t& v)
         {
-            v        = 0;
+            v = 0;
+            m5::types::little_uint16_t lv{};
             auto err = AdapterI2C::WireImpl::writeWithTransaction(reg, nullptr, 0U, true);
             if (err == m5::hal::error::error_t::OK) {
-                uint8_t rbuf[2]{};
-                err = readWithTransaction(rbuf, 2);
+                err = readWithTransaction(lv.data(), 2);
                 if (err == m5::hal::error::error_t::OK) {
-                    v = (rbuf[1] << 8) | rbuf[0];
+                    v = lv.get();
                 }
             }
             return err;
@@ -206,8 +206,8 @@ public:
         }
         inline virtual m5::hal::error::error_t writeDigitalRX(const bool high) override
         {
-            const uint8_t reg = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_RX);
-            uint8_t v[1]      = {high};
+            const uint8_t reg  = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_RX);
+            const uint8_t v[1] = {high};
             return AdapterI2C::I2CClassImpl::writeWithTransaction(reg, v, 1, true);
         }
         inline virtual m5::hal::error::error_t readDigitalRX(bool& high) override
@@ -230,8 +230,8 @@ public:
         }
         inline virtual m5::hal::error::error_t writeDigitalTX(const bool high) override
         {
-            const uint8_t reg = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_TX);
-            uint8_t v[1]      = {high};
+            const uint8_t reg  = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_TX);
+            const uint8_t v[1] = {high};
             return AdapterI2C::I2CClassImpl::writeWithTransaction(reg, v, 1, true);
         }
         inline virtual m5::hal::error::error_t readDigitalTX(bool& high) override
@@ -301,13 +301,13 @@ public:
         }
         m5::hal::error::error_t read_register16LE(const uint8_t reg, uint16_t& v)
         {
-            v        = 0;
+            v = 0;
+            m5::types::little_uint16_t lv{};
             auto err = AdapterI2C::I2CClassImpl::writeWithTransaction(reg, nullptr, 0U, true);
             if (err == m5::hal::error::error_t::OK) {
-                uint8_t rbuf[2]{};
-                err = readWithTransaction(rbuf, 2);
+                err = readWithTransaction(lv.data(), 2);
                 if (err == m5::hal::error::error_t::OK) {
-                    v = (rbuf[1] << 8) | rbuf[0];
+                    v = lv.get();
                 }
             }
             return err;
@@ -345,8 +345,8 @@ public:
         }
         inline virtual m5::hal::error::error_t writeDigitalRX(const bool high) override
         {
-            const uint8_t reg = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_RX);
-            uint8_t v[1]      = {high};
+            const uint8_t reg  = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_RX);
+            const uint8_t v[1] = {high};
             return AdapterI2C::BusImpl::writeWithTransaction(reg, v, 1, true);
         }
         inline virtual m5::hal::error::error_t readDigitalRX(bool& high) override
@@ -368,8 +368,8 @@ public:
         }
         inline virtual m5::hal::error::error_t writeDigitalTX(const bool high) override
         {
-            const uint8_t reg = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_TX);
-            uint8_t v[1]      = {high};
+            const uint8_t reg  = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_TX);
+            const uint8_t v[1] = {high};
             return AdapterI2C::BusImpl::writeWithTransaction(reg, v, 1, true);
         }
         inline virtual m5::hal::error::error_t readDigitalTX(bool& high) override
@@ -438,13 +438,13 @@ public:
         }
         m5::hal::error::error_t read_register16LE(const uint8_t reg, uint16_t& v)
         {
-            v        = 0;
+            v = 0;
+            m5::types::little_uint16_t lv{};
             auto err = AdapterI2C::BusImpl::writeWithTransaction(reg, nullptr, 0U, true);
             if (err == m5::hal::error::error_t::OK) {
-                uint8_t rbuf[2]{};
-                err = readWithTransaction(rbuf, 2);
+                err = readWithTransaction(lv.data(), 2);
                 if (err == m5::hal::error::error_t::OK) {
-                    v = (rbuf[1] << 8) | rbuf[0];
+                    v = lv.get();
                 }
             }
             return err;
@@ -620,6 +620,10 @@ bool UnitPbHub::readLEDMode(pbhub::LEDMode& m)
 
     uint8_t v{0xFF};
     if (readRegister8(LED_MODE_REG, v, 0)) {
+        if (v > m5::stl::to_underlying(LEDMode::SK6822)) {
+            M5_LIB_LOGW("Unexpected LED mode value %u", v);
+            return false;
+        }
         m = static_cast<LEDMode>(v);
         return true;
     }

@@ -34,7 +34,7 @@ public:
 
     /*!
       @brief Get current channel
-      @return Channel no(0...)
+      @return Channel number (0..MAX_CHANNEL-1), or 0xFF if no channel selected
     */
     uint8_t currentChannel() const
     {

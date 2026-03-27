@@ -117,7 +117,7 @@ public:
     }
     ///@}
 
-    ///@warning Function in PbHub
+    ///@warning Function available only in PbHub (not PbHub v1.1)
     ///@name Analog write
     ///@{
     /*!
