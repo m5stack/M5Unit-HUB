@@ -42,7 +42,16 @@ See also examples using conventional methods here.
 - [M5Unit-HUB - MIT](LICENSE)
 
 ## Examples
+### PaHub
 See also [examples/UnitUnified](examples/UnitUnified)
+
+### PbHub
+The following units support connection via PbHub using the GPIO adapter.
+Each unit library contains a `ViaPbHub` example demonstrating usage through PbHub.
+
+| Unit | Library | Features used |
+|------|---------|---------------|
+| [UnitTubePressure](https://github.com/m5stack/M5Unit-TUBE) | M5Unit-TUBE | Analog read |
 
 ## Doxygen document
 [GitHub Pages](https://m5stack.github.io/M5Unit-HUB/)

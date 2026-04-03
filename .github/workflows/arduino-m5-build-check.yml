@@ -12,36 +12,28 @@ on:
     branches:
       - '*'
     paths:
-      - 'src/unit/**.cpp'
-      - 'src/unit/**.hpp'
-      - 'src/unit/**.h'
-      - 'src/unit/**.c'
-      - 'test/**.cpp'
-      - 'test/**.hpp'
-      - 'test/**.h'
-      - 'test/**.c'
+      - 'src/**.cpp'
+      - 'src/**.hpp'
+      - 'src/**.h'
+      - 'src/**.c'
       - 'examples/UnitUnified/**.ino'
       - 'examples/UnitUnified/**.cpp'
       - 'examples/UnitUnified/**.hpp'
       - 'examples/UnitUnified/**.h'
       - 'examples/UnitUnified/**.c'
-      - '**arduino-m5-build-check.yml'
+      - '.github/workflows/arduino-m5-build-check.yml'
   pull_request:
     paths:
-      - 'src/unit/**.cpp'
-      - 'src/unit/**.hpp'
-      - 'src/unit/**.h'
-      - 'src/unit/**.c'
-      - 'test/**.cpp'
-      - 'test/**.hpp'
-      - 'test/**.h'
-      - 'test/**.c'
+      - 'src/**.cpp'
+      - 'src/**.hpp'
+      - 'src/**.h'
+      - 'src/**.c'
       - 'examples/UnitUnified/**.ino'
       - 'examples/UnitUnified/**.cpp'
       - 'examples/UnitUnified/**.hpp'
       - 'examples/UnitUnified/**.h'
       - 'examples/UnitUnified/**.c'
-      - '**arduino-m5-build-check.yml'
+      - '.github/workflows/arduino-m5-build-check.yml'
   workflow_dispatch:
 
 defaults:
@@ -121,16 +113,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Build 
+      - name: Prepare libraries list
+        id: libs
+        run: |
+          {
+            echo "yaml<<EOF"
+            echo "$REQUIRED_LIBRARIES" | tr ',' '\n' | while read -r lib; do
+              echo "- name: $lib"
+            done
+            echo "- source-path: ./"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Compile examples
-        uses: ArminJo/arduino-test-compile@master
+        uses: arduino/compile-sketches@v1
         with:
-          arduino-board-fqbn: ${{ matrix.platform }}:${{ matrix.archi }}:${{ matrix.board }}
-          arduino-platform: ${{ matrix.platform }}:${{ matrix.archi }}@${{ matrix.platform-version }}
-          platform-url: ${{ matrix.platform-url }}
-          required-libraries: ${{ env.REQUIRED_LIBRARIES }}
-          extra-arduino-cli-args: ${{ matrix.cli-args }}
-          #build-properties: ${{ toJson(matrix.build-properties) }}
-          sketch-names: ${{ matrix.sketch }}.ino
-          sketch-names-find-start: ${{ env.SKETCH_NAMES_FIND_START }}/${{ matrix.unit }}
-          #sketches-exclude: ${{ matrix.sketches-exclude }}
+          fqbn: ${{ matrix.platform }}:${{ matrix.archi }}:${{ matrix.board }}
+          platforms: |
+            - name: ${{ matrix.platform }}:${{ matrix.archi }}
+              source-url: ${{ matrix.platform-url }}
+              version: ${{ matrix.platform-version }}
+          libraries: ${{ steps.libs.outputs.yaml }}
+          sketch-paths: |
+            - ${{ env.SKETCH_NAMES_FIND_START }}/${{ matrix.unit }}/${{ matrix.sketch }}

@@ -28,7 +28,7 @@ TEST_F(TestPCA9548AP, Basic)
 {
     SCOPED_TRACE(ustr);
 
-    for (uint8_t ch = 0; ch < 6U; ++ch) {
+    for (uint8_t ch = 0; ch < UnitPCA9548AP::MAX_CHANNEL; ++ch) {
         EXPECT_TRUE(unit->selectChannel(ch));
         EXPECT_EQ(unit->currentChannel(), ch);
 
@@ -37,4 +37,8 @@ TEST_F(TestPCA9548AP, Basic)
         // M5_LOGW("ch:%u bits:%0x", ch, bits);
         EXPECT_EQ(1U << ch, bits);
     }
+
+    // Out of range
+    EXPECT_FALSE(unit->selectChannel(UnitPCA9548AP::MAX_CHANNEL));
+    EXPECT_FALSE(unit->selectChannel(255));
 }

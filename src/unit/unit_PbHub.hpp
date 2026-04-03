@@ -50,12 +50,16 @@ class UnitPbHub : public Component {
     M5_UNIT_COMPONENT_HPP_BUILDER(UnitPbHub, 0x61);
 
 public:
-    constexpr static uint8_t MAX_CHANNEL{6};
-    constexpr static uint8_t MAX_LED_COUNT{74};
+    constexpr static uint8_t MAX_CHANNEL{6};     //!< @brief Maximum number of channels
+    constexpr static uint8_t MAX_LED_COUNT{74};  //!< @brief Maximum number of LEDs per channel
 
+    //! @brief Constructor
+    //! @param addr I2C address
     explicit UnitPbHub(const uint8_t addr = DEFAULT_ADDRESS);
     virtual ~UnitPbHub() = default;
 
+    //! @brief Begin communication and detect hardware version
+    //! @return True if successful
     virtual bool begin() override;
 
     /*!
@@ -102,7 +106,7 @@ public:
         return read_digital(ch, 0, high);
     }
     /*!
-      @brief Read digital 0 from a specific channel
+      @brief Read digital 1 from a specific channel
       @param[out] high HIGH if true, LOW if false
       @param ch Channel
       @return True if successful
@@ -113,7 +117,7 @@ public:
     }
     ///@}
 
-    ///@warning Function in PbHub
+    ///@warning Function available only in PbHub (not PbHub v1.1)
     ///@name Analog write
     ///@{
     /*!
@@ -335,7 +339,7 @@ public:
 
     /*!
       @brief Read the firmware version
-      @param[out] ver
+      @param[out] ver Firmware version
       @return True if successful
       @warning Function in v1.1 or later
      */
@@ -360,8 +364,8 @@ protected:
     bool read_pwm(const uint8_t ch, const uint8_t index, uint8_t& val);
     bool write_servo_angle(const uint8_t ch, const uint8_t index, const uint8_t angle);
     bool read_servo_angle(const uint8_t ch, const uint8_t index, uint8_t& angle);
-    bool write_servo_pulse(const uint8_t ch, const uint8_t index, const uint16_t angle);
-    bool read_servo_pulse(const uint8_t ch, const uint8_t index, uint16_t& angle);
+    bool write_servo_pulse(const uint8_t ch, const uint8_t index, const uint16_t pulse);
+    bool read_servo_pulse(const uint8_t ch, const uint8_t index, uint16_t& pulse);
     void wait_led_output(const uint16_t num_leds) const;
 
     inline bool is_firmware_2_or_later() const
@@ -407,7 +411,7 @@ constexpr uint8_t SERVO_ANGLE_1_REG{0x0D};  // v1.1
 constexpr uint8_t SERVO_PULSE_0_REG{0x0E};  // v1.1
 constexpr uint8_t SERVO_PULSE_1_REG{0x0F};  // v1.1
 
-constexpr uint8_t LED_MODE_REG{0x0FA};         // v1.1 FW V2
+constexpr uint8_t LED_MODE_REG{0xFA};          // v1.1 FW V2
 constexpr uint8_t FIRMWARE_VERSION_REG{0xFE};  // v1.1
 constexpr uint8_t I2C_ADDRESS_REG{0xFF};       // v1.1
 ///@endcond

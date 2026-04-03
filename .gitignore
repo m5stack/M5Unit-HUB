@@ -30,3 +30,24 @@
 *.exe
 *.out
 *.app
+
+# Doxygen
+docs/html/
+
+# PlatformIO
+.pio/
+
+# IDE
+.vscode/
+
+# macOS
+.DS_Store
+
+# Temporary
+tmp/
+
+# Secrets
+.env*
+*.pem
+*.key
+*.cert

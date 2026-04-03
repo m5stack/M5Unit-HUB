@@ -18,20 +18,23 @@ namespace unit {
 
 /*!
   @class m5::unit::UnitPCA9548AP
-  @brief PCA9548AP unit
+  @brief PCA9548AP I2C multiplexer unit
+  @note PCA9548AP has 8 channels but PaHub exposes 6
  */
 class UnitPCA9548AP : public Component {
     M5_UNIT_COMPONENT_HPP_BUILDER(UnitPCA9548AP, 0x70);
 
 public:
-    constexpr static uint8_t MAX_CHANNEL = 6;
+    constexpr static uint8_t MAX_CHANNEL{6};  //!< @brief Maximum number of channels
 
+    //! @brief Constructor
+    //! @param addr I2C address
     explicit UnitPCA9548AP(const uint8_t addr = DEFAULT_ADDRESS);
     virtual ~UnitPCA9548AP() = default;
 
     /*!
       @brief Get current channel
-      @return Channel no(0...)
+      @return Channel number (0..MAX_CHANNEL-1), or 0xFF if no channel selected
     */
     uint8_t currentChannel() const
     {

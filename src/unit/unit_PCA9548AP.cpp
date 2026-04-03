@@ -58,7 +58,7 @@ m5::hal::error::error_t UnitPCA9548AP::select_channel(const uint8_t ch)
     if (ch < MAX_CHANNEL) {
         m5::hal::error::error_t ret{m5::hal::error::error_t::OK};
         if (ch != _current) {
-            uint8_t buf = (1U << ch);
+            const uint8_t buf = (1U << ch);
             // Avoid recursion:
             // Component::writeWithTransaction() calls selectChannel() internally.
             // Calling it here would recurse back into select_channel().
