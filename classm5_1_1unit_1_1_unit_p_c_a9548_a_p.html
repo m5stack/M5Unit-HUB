@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">M5Unit-HUB<span id="projectnumber">&#160;0.3.0 git rev:410cf46</span>
+   <div id="projectname">M5Unit-HUB<span id="projectnumber">&#160;0.3.1 git rev:3cfc07a</span>
    </div>
   </td>
  </tr>
@@ -106,7 +106,7 @@ $(function(){initNavTree('classm5_1_1unit_1_1_unit_p_c_a9548_a_p.html',''); init
 </div><!--header-->
 <div class="contents">
 
-<p>PCA9548AP unit.  
+<p>PCA9548AP I2C multiplexer unit.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="unit___p_c_a9548_a_p_8hpp_source.html">unit_PCA9548AP.hpp</a>&gt;</code></p>
@@ -119,8 +119,8 @@ Inheritance diagram for m5::unit::UnitPCA9548AP:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a11039d7c9d31dec2ba064effd72b4a5e" id="r_a11039d7c9d31dec2ba064effd72b4a5e"><td class="memItemLeft" align="right" valign="top"><a id="a11039d7c9d31dec2ba064effd72b4a5e" name="a11039d7c9d31dec2ba064effd72b4a5e"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>UnitPCA9548AP</b> (const uint8_t addr=DEFAULT_ADDRESS)</td></tr>
+<tr class="memitem:a11039d7c9d31dec2ba064effd72b4a5e" id="r_a11039d7c9d31dec2ba064effd72b4a5e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11039d7c9d31dec2ba064effd72b4a5e">UnitPCA9548AP</a> (const uint8_t addr=DEFAULT_ADDRESS)</td></tr>
+<tr class="memdesc:a11039d7c9d31dec2ba064effd72b4a5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
 <tr class="separator:a11039d7c9d31dec2ba064effd72b4a5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47d4fc1c80ed0ba54bd60c68bd085797" id="r_a47d4fc1c80ed0ba54bd60c68bd085797"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47d4fc1c80ed0ba54bd60c68bd085797">currentChannel</a> () const</td></tr>
 <tr class="memdesc:a47d4fc1c80ed0ba54bd60c68bd085797"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get current channel.  <br /></td></tr>
@@ -132,7 +132,8 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a30541c6c8e224968bdec8d4efe4c3757" id="r_a30541c6c8e224968bdec8d4efe4c3757"><td class="memItemLeft" align="right" valign="top"><a id="a30541c6c8e224968bdec8d4efe4c3757" name="a30541c6c8e224968bdec8d4efe4c3757"></a>
-static constexpr uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_CHANNEL</b> = 6</td></tr>
+static constexpr uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_CHANNEL</b> {6}</td></tr>
+<tr class="memdesc:a30541c6c8e224968bdec8d4efe4c3757"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of channels. <br /></td></tr>
 <tr class="separator:a30541c6c8e224968bdec8d4efe4c3757"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
@@ -151,8 +152,43 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>_current</b> {0xFF
 <tr class="separator:a8120c0f73035461a57e14c7bec91a9f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>PCA9548AP unit. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+<div class="textblock"><p>PCA9548AP I2C multiplexer unit. </p>
+<dl class="section note"><dt>Note</dt><dd>PCA9548AP has 8 channels but PaHub exposes 6 </dd></dl>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a11039d7c9d31dec2ba064effd72b4a5e" name="a11039d7c9d31dec2ba064effd72b4a5e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11039d7c9d31dec2ba064effd72b4a5e">&#9670;&#160;</a></span>UnitPCA9548AP()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">m5::unit::UnitPCA9548AP::UnitPCA9548AP </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>addr</em></span><span class="paramdefsep"> = </span><span class="paramdefval">DEFAULT_ADDRESS</span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">addr</td><td>I2C address </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="a47d4fc1c80ed0ba54bd60c68bd085797" name="a47d4fc1c80ed0ba54bd60c68bd085797"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a47d4fc1c80ed0ba54bd60c68bd085797">&#9670;&#160;</a></span>currentChannel()</h2>
 
@@ -177,7 +213,7 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>_current</b> {0xFF
 </div><div class="memdoc">
 
 <p>Get current channel. </p>
-<dl class="section return"><dt>Returns</dt><dd>Channel no(0...) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Channel number (0..MAX_CHANNEL-1), or 0xFF if no channel selected </dd></dl>
 
 </div>
 </div>

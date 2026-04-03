@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">M5Unit-HUB<span id="projectnumber">&#160;0.3.0 git rev:410cf46</span>
+   <div id="projectname">M5Unit-HUB<span id="projectnumber">&#160;0.3.1 git rev:3cfc07a</span>
    </div>
   </td>
  </tr>
@@ -118,11 +118,11 @@ Inheritance diagram for m5::unit::UnitPbHub:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a17183c1bc6bf04d16cfd92be597c3a47" id="r_a17183c1bc6bf04d16cfd92be597c3a47"><td class="memItemLeft" align="right" valign="top"><a id="a17183c1bc6bf04d16cfd92be597c3a47" name="a17183c1bc6bf04d16cfd92be597c3a47"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>UnitPbHub</b> (const uint8_t addr=DEFAULT_ADDRESS)</td></tr>
+<tr class="memitem:a17183c1bc6bf04d16cfd92be597c3a47" id="r_a17183c1bc6bf04d16cfd92be597c3a47"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a17183c1bc6bf04d16cfd92be597c3a47">UnitPbHub</a> (const uint8_t addr=DEFAULT_ADDRESS)</td></tr>
+<tr class="memdesc:a17183c1bc6bf04d16cfd92be597c3a47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
 <tr class="separator:a17183c1bc6bf04d16cfd92be597c3a47"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4eb1f28f398809a0ccfd0e31833005f6" id="r_a4eb1f28f398809a0ccfd0e31833005f6"><td class="memItemLeft" align="right" valign="top"><a id="a4eb1f28f398809a0ccfd0e31833005f6" name="a4eb1f28f398809a0ccfd0e31833005f6"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>begin</b> () override</td></tr>
+<tr class="memitem:a4eb1f28f398809a0ccfd0e31833005f6" id="r_a4eb1f28f398809a0ccfd0e31833005f6"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4eb1f28f398809a0ccfd0e31833005f6">begin</a> () override</td></tr>
+<tr class="memdesc:a4eb1f28f398809a0ccfd0e31833005f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begin communication and detect hardware version.  <br /></td></tr>
 <tr class="separator:a4eb1f28f398809a0ccfd0e31833005f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76957255d46a548a379b3bf7c193d9e6" id="r_a76957255d46a548a379b3bf7c193d9e6"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a76957255d46a548a379b3bf7c193d9e6">firmwareVersion</a> () const</td></tr>
 <tr class="memdesc:a76957255d46a548a379b3bf7c193d9e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the firmware version.  <br /></td></tr>
@@ -144,10 +144,10 @@ virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>begin</b> () 
 <tr class="memdesc:a47c674a244b22276b885caab97a91cbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read digital 0 from a specific channel.  <br /></td></tr>
 <tr class="separator:a47c674a244b22276b885caab97a91cbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2bafe87196ca3ccffd94abf2260395be" id="r_a2bafe87196ca3ccffd94abf2260395be"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2bafe87196ca3ccffd94abf2260395be">readDigital1</a> (bool &amp;high, const uint8_t ch)</td></tr>
-<tr class="memdesc:a2bafe87196ca3ccffd94abf2260395be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read digital 0 from a specific channel.  <br /></td></tr>
+<tr class="memdesc:a2bafe87196ca3ccffd94abf2260395be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read digital 1 from a specific channel.  <br /></td></tr>
 <tr class="separator:a2bafe87196ca3ccffd94abf2260395be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Analog write</div></td></tr>
-<tr><td colspan="2"><div class="groupText"><dl class="section warning"><dt>Warning</dt><dd>Function in PbHub </dd></dl>
+<tr><td colspan="2"><div class="groupText"><dl class="section warning"><dt>Warning</dt><dd>Function available only in PbHub (not PbHub v1.1) </dd></dl>
 </div></td></tr>
 <tr class="memitem:ab5ecf2bd6784d81a7ed6c0ada08d7aa3" id="r_ab5ecf2bd6784d81a7ed6c0ada08d7aa3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab5ecf2bd6784d81a7ed6c0ada08d7aa3">writeAnalog0</a> (const uint8_t ch, const uint8_t val)</td></tr>
 <tr class="memdesc:ab5ecf2bd6784d81a7ed6c0ada08d7aa3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write analog 0 to a specific channel.  <br /></td></tr>
@@ -230,9 +230,11 @@ pulse valid range between 500 and 2500 </dd></dl>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:aaacb896dfbfd9862225c04b31117ef3b" id="r_aaacb896dfbfd9862225c04b31117ef3b"><td class="memItemLeft" align="right" valign="top"><a id="aaacb896dfbfd9862225c04b31117ef3b" name="aaacb896dfbfd9862225c04b31117ef3b"></a>
 static constexpr uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_CHANNEL</b> {6}</td></tr>
+<tr class="memdesc:aaacb896dfbfd9862225c04b31117ef3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of channels. <br /></td></tr>
 <tr class="separator:aaacb896dfbfd9862225c04b31117ef3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3d7d14864410f377d8b2b4156c67446" id="r_ab3d7d14864410f377d8b2b4156c67446"><td class="memItemLeft" align="right" valign="top"><a id="ab3d7d14864410f377d8b2b4156c67446" name="ab3d7d14864410f377d8b2b4156c67446"></a>
 static constexpr uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_LED_COUNT</b> {74}</td></tr>
+<tr class="memdesc:ab3d7d14864410f377d8b2b4156c67446"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of LEDs per channel. <br /></td></tr>
 <tr class="separator:ab3d7d14864410f377d8b2b4156c67446"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
@@ -261,12 +263,12 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>write_servo_angle</b>
 <tr class="memitem:ad15bb160e1fede6f86f35c0ce706ff54" id="r_ad15bb160e1fede6f86f35c0ce706ff54"><td class="memItemLeft" align="right" valign="top"><a id="ad15bb160e1fede6f86f35c0ce706ff54" name="ad15bb160e1fede6f86f35c0ce706ff54"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>read_servo_angle</b> (const uint8_t ch, const uint8_t index, uint8_t &amp;angle)</td></tr>
 <tr class="separator:ad15bb160e1fede6f86f35c0ce706ff54"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:accb3c75f8b6fb76df55baa220ae0d8ef" id="r_accb3c75f8b6fb76df55baa220ae0d8ef"><td class="memItemLeft" align="right" valign="top"><a id="accb3c75f8b6fb76df55baa220ae0d8ef" name="accb3c75f8b6fb76df55baa220ae0d8ef"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>write_servo_pulse</b> (const uint8_t ch, const uint8_t index, const uint16_t angle)</td></tr>
-<tr class="separator:accb3c75f8b6fb76df55baa220ae0d8ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a617990473c08a1b7145a4e3a1582aade" id="r_a617990473c08a1b7145a4e3a1582aade"><td class="memItemLeft" align="right" valign="top"><a id="a617990473c08a1b7145a4e3a1582aade" name="a617990473c08a1b7145a4e3a1582aade"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>read_servo_pulse</b> (const uint8_t ch, const uint8_t index, uint16_t &amp;angle)</td></tr>
-<tr class="separator:a617990473c08a1b7145a4e3a1582aade"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4c2944422e4425c8f0097283f49d358" id="r_af4c2944422e4425c8f0097283f49d358"><td class="memItemLeft" align="right" valign="top"><a id="af4c2944422e4425c8f0097283f49d358" name="af4c2944422e4425c8f0097283f49d358"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>write_servo_pulse</b> (const uint8_t ch, const uint8_t index, const uint16_t pulse)</td></tr>
+<tr class="separator:af4c2944422e4425c8f0097283f49d358"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22546cc1c267c25fdc2e8d15acf5d017" id="r_a22546cc1c267c25fdc2e8d15acf5d017"><td class="memItemLeft" align="right" valign="top"><a id="a22546cc1c267c25fdc2e8d15acf5d017" name="a22546cc1c267c25fdc2e8d15acf5d017"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>read_servo_pulse</b> (const uint8_t ch, const uint8_t index, uint16_t &amp;pulse)</td></tr>
+<tr class="separator:a22546cc1c267c25fdc2e8d15acf5d017"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1db928d784a6163820047a7bac7a5038" id="r_a1db928d784a6163820047a7bac7a5038"><td class="memItemLeft" align="right" valign="top"><a id="a1db928d784a6163820047a7bac7a5038" name="a1db928d784a6163820047a7bac7a5038"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>wait_led_output</b> (const uint16_t num_leds) const</td></tr>
 <tr class="separator:a1db928d784a6163820047a7bac7a5038"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -292,7 +294,69 @@ to achieve basic digital read and write, analog Read and write. </dd>
 But for units such as Weight (built-in HX711) that not only need to read analog, </dd>
 <dd>
 but also depend on the timing of the Unit, PbHUB cannot be expanded. </dd></dl>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a17183c1bc6bf04d16cfd92be597c3a47" name="a17183c1bc6bf04d16cfd92be597c3a47"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17183c1bc6bf04d16cfd92be597c3a47">&#9670;&#160;</a></span>UnitPbHub()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">m5::unit::UnitPbHub::UnitPbHub </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>addr</em></span><span class="paramdefsep"> = </span><span class="paramdefval">DEFAULT_ADDRESS</span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">addr</td><td>I2C address </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a4eb1f28f398809a0ccfd0e31833005f6" name="a4eb1f28f398809a0ccfd0e31833005f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4eb1f28f398809a0ccfd0e31833005f6">&#9670;&#160;</a></span>begin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool m5::unit::UnitPbHub::begin </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Begin communication and detect hardware version. </p>
+<dl class="section return"><dt>Returns</dt><dd>True if successful </dd></dl>
+
+</div>
+</div>
 <a id="af2e8f7bf78f297c70fda21d7710697bf" name="af2e8f7bf78f297c70fda21d7710697bf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af2e8f7bf78f297c70fda21d7710697bf">&#9670;&#160;</a></span>changeI2CAddress()</h2>
 
@@ -392,7 +456,7 @@ Function in v1.1 or later </dd></dl>
 <dl class="retval"><dt>Return values</dt><dd>
   <table class="retval">
     <tr><td class="paramname">==</td><td>0 No firmware version (means PbHub) </td></tr>
-    <tr><td class="paramname">==</td><td>0xFF Not determined because begin() has not been called. </td></tr>
+    <tr><td class="paramname">==</td><td>0xFF Not determined because <a class="el" href="#a4eb1f28f398809a0ccfd0e31833005f6" title="Begin communication and detect hardware version.">begin()</a> has not been called. </td></tr>
     <tr><td class="paramname">!=0</td><td>&amp;&amp; !=0xFF Firmware version (means PbHub v1.1) </td></tr>
   </table>
   </dd>
@@ -497,7 +561,7 @@ Function in v1.1 or later </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Read digital 0 from a specific channel. </p>
+<p>Read digital 1 from a specific channel. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[out]</td><td class="paramname">high</td><td>HIGH if true, LOW if false </td></tr>
@@ -527,7 +591,7 @@ Function in v1.1 or later </dd></dl>
 <p>Read the firmware version. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[out]</td><td class="paramname">ver</td><td></td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">ver</td><td>Firmware version </td></tr>
   </table>
   </dd>
 </dl>

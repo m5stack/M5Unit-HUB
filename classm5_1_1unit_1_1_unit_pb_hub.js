@@ -1,5 +1,7 @@
 var classm5_1_1unit_1_1_unit_pb_hub =
 [
+    [ "UnitPbHub", "classm5_1_1unit_1_1_unit_pb_hub.html#a17183c1bc6bf04d16cfd92be597c3a47", null ],
+    [ "begin", "classm5_1_1unit_1_1_unit_pb_hub.html#a4eb1f28f398809a0ccfd0e31833005f6", null ],
     [ "changeI2CAddress", "classm5_1_1unit_1_1_unit_pb_hub.html#af2e8f7bf78f297c70fda21d7710697bf", null ],
     [ "fillLEDColor", "classm5_1_1unit_1_1_unit_pb_hub.html#ac0c9f277ecda8e4c5ab2806a2abb910a", null ],
     [ "firmwareVersion", "classm5_1_1unit_1_1_unit_pb_hub.html#a76957255d46a548a379b3bf7c193d9e6", null ],
