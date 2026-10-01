@@ -54,6 +54,7 @@ namespace unit {
 // Adapter For children
 class AdapterPbHub : public AdapterI2C {
 public:
+#if defined(ARDUINO)
     class PbHubWireImpl : public AdapterI2C::WireImpl {
     public:
         PbHubWireImpl(TwoWire& wire, const uint8_t addr, const uint32_t clock, const uint8_t ch)
@@ -187,6 +188,7 @@ public:
     private:
         uint8_t _channel{};
     };
+#endif
 
     // I2C_Class version: reuses I2CClassImpl for transport, adds PbHub GPIO overrides
     class PbHubI2CClassImpl : public AdapterI2C::I2CClassImpl {
@@ -463,6 +465,212 @@ public:
         : AdapterPbHub(&bus, addr, clock, ch)
     {
     }
+
+    // Delegate version: transfers through a duplicate of the parent impl, adds PbHub GPIO overrides
+    // Used for the impl types that have no dedicated PbHub impl (ESP-IDF native I2C drivers)
+    class PbHubDelegateImpl : public AdapterI2C::I2CImpl {
+    public:
+        PbHubDelegateImpl(AdapterI2C::I2CImpl* impl, const uint8_t ch)
+            : AdapterI2C::I2CImpl(impl->address(), impl->clock()), _impl{impl}, _channel{ch}
+        {
+        }
+
+        static constexpr uint8_t IO_RX{0};
+        static constexpr uint8_t IO_TX{1};
+
+        inline virtual void setAddress(const uint8_t addr) override
+        {
+            AdapterI2C::I2CImpl::setAddress(addr);
+            _impl->setAddress(addr);
+        }
+        inline virtual void setClock(const uint32_t clock) override
+        {
+            AdapterI2C::I2CImpl::setClock(clock);
+            _impl->setClock(clock);
+        }
+        inline virtual int16_t scl() const override
+        {
+            return _impl->scl();
+        }
+        inline virtual int16_t sda() const override
+        {
+            return _impl->sda();
+        }
+        inline virtual bool begin() override
+        {
+            return _impl->begin();
+        }
+        inline virtual bool end() override
+        {
+            return _impl->end();
+        }
+        inline virtual m5::hal::error::error_t wakeup() override
+        {
+            return _impl->wakeup();
+        }
+        inline virtual AdapterI2C::I2CImpl* duplicate(const uint8_t addr) override
+        {
+            return _impl->duplicate(addr);
+        }
+        inline virtual ImplType implType() const override
+        {
+            return _impl->implType();
+        }
+        inline virtual TwoWire* getWire() override
+        {
+            return _impl->getWire();
+        }
+        inline virtual m5::hal::bus::Bus* getBus() override
+        {
+            return _impl->getBus();
+        }
+        inline virtual m5::I2C_Class* getI2CClass() override
+        {
+            return _impl->getI2CClass();
+        }
+
+        inline virtual m5::hal::error::error_t readWithTransaction(uint8_t* data, const size_t len) override
+        {
+            return _impl->readWithTransaction(data, len);
+        }
+        inline virtual m5::hal::error::error_t writeWithTransaction(const uint8_t reg, const uint8_t* data,
+                                                                    const size_t len, const uint32_t stop) override
+        {
+            return _impl->writeWithTransaction(reg, data, len, stop);
+        }
+        inline virtual m5::hal::error::error_t writeWithTransaction(const uint16_t reg, const uint8_t* data,
+                                                                    const size_t len, const uint32_t stop) override
+        {
+            return _impl->writeWithTransaction(reg, data, len, stop);
+        }
+        inline virtual m5::hal::error::error_t generalCall(const uint8_t* data, const size_t len) override
+        {
+            return _impl->generalCall(data, len);
+        }
+
+        inline virtual m5::hal::error::error_t pinModeRX(const gpio::Mode) override
+        {
+            return m5::hal::error::error_t::OK;
+        }
+        inline virtual m5::hal::error::error_t writeDigitalRX(const bool high) override
+        {
+            return write_digital(IO_RX, high);
+        }
+        inline virtual m5::hal::error::error_t readDigitalRX(bool& high) override
+        {
+            return read_digital(high, IO_RX);
+        }
+        inline virtual m5::hal::error::error_t writeAnalogRX(const uint16_t) override
+        {
+            return m5::hal::error::error_t::UNKNOWN_ERROR;
+        }
+        inline virtual m5::hal::error::error_t readAnalogRX(uint16_t& v) override
+        {
+            const uint8_t reg = make_reg(READ_ANALOG_0_REG, _channel);
+            return reg ? read_register16LE(reg, v) : m5::hal::error::error_t::INVALID_ARGUMENT;
+        }
+        inline virtual m5::hal::error::error_t pinModeTX(const gpio::Mode) override
+        {
+            return m5::hal::error::error_t::OK;
+        }
+        inline virtual m5::hal::error::error_t writeDigitalTX(const bool high) override
+        {
+            return write_digital(IO_TX, high);
+        }
+        inline virtual m5::hal::error::error_t readDigitalTX(bool& high) override
+        {
+            return read_digital(high, IO_TX);
+        }
+        inline virtual m5::hal::error::error_t writeAnalogTX(const uint16_t) override
+        {
+            return m5::hal::error::error_t::UNKNOWN_ERROR;
+        }
+        inline virtual m5::hal::error::error_t readAnalogTX(uint16_t&) override
+        {
+            M5_LIB_LOGE("Cannot read analog1");
+            return m5::hal::error::error_t::UNKNOWN_ERROR;
+        }
+
+        // For write LED color
+        virtual m5::hal::error::error_t writeWithTransaction(const uint8_t* rgb888, const size_t len,
+                                                             const uint32_t stop) override
+        {
+            const uint8_t reg = LED_COLOR_SINGLE_REG + 0x40 + (0x10 * (_channel == 5 ? 6 : _channel));
+            const uint8_t* p  = rgb888;
+            for (uint_fast16_t i = 0; i < len / 3; ++i) {
+                std::array<uint8_t, 5> buf{};
+                buf[0]   = i & 0xFF;
+                buf[1]   = i >> 8;
+                buf[2]   = *p++;
+                buf[3]   = *p++;
+                buf[4]   = *p++;
+                auto ret = _impl->writeWithTransaction(reg, buf.data(), buf.size(), stop);
+                if (ret != m5::hal::error::error_t::OK) {
+                    return ret;
+                }
+            }
+            return m5::hal::error::error_t::OK;
+        }
+
+    protected:
+        m5::hal::error::error_t write_digital(const uint8_t io, const uint8_t val)
+        {
+            const uint8_t reg = make_reg(WRITE_DIGITAL_0_REG, _channel, io);
+            return _impl->writeWithTransaction(reg, &val, 1, true);
+        }
+        m5::hal::error::error_t read_digital(bool& high, const uint8_t io)
+        {
+            const uint8_t reg = make_reg(READ_DIGITAL_0_REG, _channel, io);
+            high              = true;
+            uint8_t v{};
+            auto err = read_register8(reg, v);
+            if (err == m5::hal::error::error_t::OK) {
+                high = v;
+            }
+            return err;
+        }
+        m5::hal::error::error_t read_register8(const uint8_t reg, uint8_t& v)
+        {
+            v        = 0;
+            auto err = _impl->writeWithTransaction(reg, nullptr, 0U, true);
+            if (err == m5::hal::error::error_t::OK) {
+                uint8_t rbuf[1]{};
+                err = _impl->readWithTransaction(rbuf, 1);
+                if (err == m5::hal::error::error_t::OK) {
+                    v = rbuf[0];
+                }
+            }
+            return err;
+        }
+        m5::hal::error::error_t read_register16LE(const uint8_t reg, uint16_t& v)
+        {
+            v = 0;
+            m5::types::little_uint16_t lv{};
+            auto err = _impl->writeWithTransaction(reg, nullptr, 0U, true);
+            if (err == m5::hal::error::error_t::OK) {
+                err = _impl->readWithTransaction(lv.data(), 2);
+                if (err == m5::hal::error::error_t::OK) {
+                    v = lv.get();
+                }
+            }
+            return err;
+        }
+
+    private:
+        std::unique_ptr<AdapterI2C::I2CImpl> _impl{};
+        uint8_t _channel{};
+    };
+
+    // Duplicates the parent impl (same address) and delegates the transfers to it
+    AdapterPbHub(AdapterI2C::I2CImpl& parent, const uint8_t ch) : AdapterI2C()
+    {
+        auto dup = parent.duplicate(parent.address());
+        if (dup) {
+            _impl.reset(new PbHubDelegateImpl(dup, ch));
+        } else {
+            M5_LIB_LOGE("Failed to duplicate");
+        }
+    }
 };
 
 // class UnitPbHub
@@ -671,12 +879,21 @@ std::shared_ptr<Adapter> UnitPbHub::ensure_adapter(const uint8_t ch)
         auto ad   = asAdapter<AdapterI2C>(Adapter::Type::I2C);
         auto impl = ad->impl();
         switch (impl->implType()) {
+#if defined(ARDUINO)
             case AdapterI2C::ImplType::TwoWire:
                 return std::make_shared<AdapterPbHub>(*impl->getWire(), ad->address(), ad->clock(), ch);
+#endif
             case AdapterI2C::ImplType::I2CClass:
                 return std::make_shared<AdapterPbHub>(*impl->getI2CClass(), ad->address(), ad->clock(), ch);
             case AdapterI2C::ImplType::Bus:
                 return std::make_shared<AdapterPbHub>(impl->getBus(), ad->address(), ad->clock(), ch);
+#if defined(ESP_PLATFORM) && __has_include(<driver/i2c_master.h>)
+            case AdapterI2C::ImplType::ESPIDFMasterBus:
+                return std::make_shared<AdapterPbHub>(*impl, ch);
+#elif defined(ESP_PLATFORM)
+            case AdapterI2C::ImplType::ESPIDFLegacyBus:
+                return std::make_shared<AdapterPbHub>(*impl, ch);
+#endif
             default:
                 M5_LIB_LOGE("Unsupported adapter type %u", (unsigned)impl->implType());
                 break;
