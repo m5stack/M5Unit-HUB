@@ -59,9 +59,17 @@ jobs:
 
         sketch:
           - DaisyChain
+          - PlotToSerial
 
         unit:
           - UnitPaHub
+          - UnitPbHub
+
+        exclude:
+          - unit: UnitPaHub
+            sketch: PlotToSerial
+          - unit: UnitPbHub
+            sketch: DaisyChain
 
         board:
           - arduino_nesso_n1

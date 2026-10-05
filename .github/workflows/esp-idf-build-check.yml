@@ -1,0 +1,75 @@
+name: Build(esp-idf-native)
+
+on:
+  push:
+    tags-ignore:
+      - '*.*.*'
+      - 'v*.*.*'
+    branches:
+      - '*'
+    paths:
+      - 'src/**.cpp'
+      - 'src/**.hpp'
+      - 'src/**.h'
+      - 'src/**.c'
+      - 'examples/UnitUnified/**'
+      - 'CMakeLists.txt'
+      - 'idf_component.yml'
+      - '.github/workflows/esp-idf-build-check.yml'
+  pull_request:
+    paths:
+      - 'src/**.cpp'
+      - 'src/**.hpp'
+      - 'src/**.h'
+      - 'src/**.c'
+      - 'examples/UnitUnified/**'
+      - 'CMakeLists.txt'
+      - 'idf_component.yml'
+      - '.github/workflows/esp-idf-build-check.yml'
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# The examples have no Kconfig USING_* variant, so the matrix only needs the chip and idf axes.
+# esp32 = classic Xtensa dual-core, esp32s3 = LCD-capable dual-core Xtensa with PSRAM,
+# esp32c6 (NanoC6) / esp32h2 (NanoH2) = RISC-V single-core which exercises the app_main
+# CONFIG_FREERTOS_UNICORE feedIdle branch, esp32p4 (M5Stack Tab5) = RISC-V dual-core; the
+# sdkconfig.defaults.esp32p4 overlay (chip-rev minimum keys) is auto-applied.
+jobs:
+  build:
+    name: ${{ matrix.idf }} ${{ matrix.target }} PlotToSerial
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        # idf boundaries: 5.1.7 = oldest legacy-driver (5.0.x dropped: M5GFX needs esp_mm added
+        # in 5.1), 5.4.4 = new driver/*_master.h era, 5.5.4 = latest 5.x, 6.1 = latest 6.x.
+        # Cross instead of the full product: every chip on the latest 5.x, and the idf axis on
+        # esp32 only. The PbHub child adapter branches per driver era (ESPIDFMasterBus /
+        # ESPIDFLegacyBus), and the wiring helper per chip, so the two axes are covered separately.
+        # esp32c6 x v5.1.7 is kept as the legacy driver on a single core RISC-V chip.
+        target: [esp32, esp32s3, esp32c6, esp32h2, esp32p4]
+        idf: [v5.5.4]
+        include:
+          - {target: esp32, idf: v5.1.7}    # oldest legacy driver
+          - {target: esp32, idf: v5.4.4}    # first new driver era
+          - {target: esp32, idf: v6.1}      # CONFIG_COMPILER_DISABLE_DEFAULT_ERRORS defaults to n
+          - {target: esp32c6, idf: v5.1.7}  # legacy driver on a single core RISC-V chip
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: ESP-IDF build
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: ${{ matrix.idf }}
+          target: ${{ matrix.target }}
+          path: examples/UnitUnified/UnitPbHub/PlotToSerial

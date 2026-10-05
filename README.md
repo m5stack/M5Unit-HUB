@@ -42,16 +42,22 @@ See also examples using conventional methods here.
 - [M5Unit-HUB - MIT](LICENSE)
 
 ## Examples
-### PaHub
-See also [examples/UnitUnified](examples/UnitUnified)
+This library contains [UnitPbHub/PlotToSerial](examples/UnitUnified/UnitPbHub/PlotToSerial), which uses the PbHub API only (no other unit library is needed).
 
-### PbHub
-The following units support connection via PbHub using the GPIO adapter.
-Each unit library contains a `ViaPbHub` example demonstrating usage through PbHub.
+Units that can be connected through a hub have an example in their own library:
+- `ViaPaHub`: I2C units through UnitPaHub / UnitPaHub2
+- `ViaPbHub`: GPIO units (digital / analog / PWM / servo / RGB LED) through UnitPbHub
 
-| Unit | Library | Features used |
-|------|---------|---------------|
-| [UnitTubePressure](https://github.com/m5stack/M5Unit-TUBE) | M5Unit-TUBE | Analog read |
+### For ESP-IDF settings
+> **NOTE:** The ESP-IDF native build (`idf.py`) targets ESP-IDF **5.1 or later** (5.x and 6.x).
+
+The examples have no unit selection, so menuconfig is not needed.
+
+```sh
+cd examples/UnitUnified/UnitPbHub/PlotToSerial
+idf.py set-target esp32s3
+idf.py build flash monitor
+```
 
 ## Doxygen document
 [GitHub Pages](https://m5stack.github.io/M5Unit-HUB/)

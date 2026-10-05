@@ -1,0 +1,10 @@
+## Dependencies for the ESP-IDF build of the UnitPbHub PlotToSerial example.
+## - M5Unit-HUB is taken from the local checkout (path) so the example builds against the library
+##   in this repo. M5UnitUnified (and its transitive deps M5HAL / M5Utility) are pulled in via
+##   M5Unit-HUB's own idf_component.yml (git main until the ESP Component Registry publish).
+## - M5Unified >=0.2.17 declares M5GFX as a transitive dependency in its idf_component.yml.
+dependencies:
+  idf: ">=5.1"
+  m5stack/M5Unit-HUB:
+    path: "../../../../.."
+  m5stack/M5Unified: ">=0.2.17"

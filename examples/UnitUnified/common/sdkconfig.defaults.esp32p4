@@ -1,0 +1,11 @@
+# ESP32-P4 (e.g. M5Tab5) chip-revision support.
+# Applied automatically for the esp32p4 target alongside common/sdkconfig.defaults.
+#
+# IDF v5.5+ defaults the P4 minimum chip revision to v3.1 (REV_MIN_301), which rejects early P4
+# silicon -- the M5Tab5 reports revision v1.0, so flashing fails with
+#   "bootloader.bin requires chip revision in range [v3.1 - v3.99] (this chip is revision v1.0)".
+# Enable the pre-v3 selection and lower the minimum to v0.0 so every P4 revision (incl. Tab5 v1.0)
+# boots. On IDF versions that do not have these keys they are ignored (with a warning); those
+# versions already default to a v1.0-compatible minimum, so the build still flashes.
+CONFIG_ESP32P4_SELECTS_REV_LESS_V3=y
+CONFIG_ESP32P4_REV_MIN_0=y
