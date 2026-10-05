@@ -21,7 +21,7 @@ The module is equipped with an onboard DIP switch to easily adjust the I2C addre
 ### SKU:U041-B
 Unit Pbhub v1.1 is an I2C-controlled 6-channel PORT.B expander. Each Port B interface can achieve GPIO, PWM, Servo control, ADC sampling, RGB light control, and more. It is internally controlled by an STM32F030 microcontroller.
 
-Note : Not all Units with a black interface (PortB) support expansion through PbHUB. PbHUB can only be applied to basic single-bus communication, through the I2C protocol (built-in MEGA328) to achieve basic digital read and write, analog Read and write. But for units such as Weight (built-in HX711) that not only need to read analog, but also depend on the timing of the Unit, PbHUB cannot be expanded.
+Note : Not all Units with a black interface (PortB) support expansion through PbHUB. PbHUB can only be applied to basic single-bus communication, through the I2C protocol to achieve basic digital read and write, analog Read and write. But for units such as Weight (built-in HX711) that not only need to read analog, but also depend on the timing of the Unit, PbHUB cannot be expanded.
 
 
 ## Related Link
@@ -73,5 +73,4 @@ If you want to output Git commit hashes to html, do it for the git cloned folder
 
 ### Required
 - [Doxygen](https://www.doxygen.nl/)
-- [pcregrep](https://formulae.brew.sh/formula/pcre2)
 - [Git](https://git-scm.com/) (Output commit hash to html)
