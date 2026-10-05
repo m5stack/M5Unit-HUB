@@ -5,7 +5,7 @@
  */
 /*!
   @file M5UnitUnifiedHUB.hpp
-  @brief Main header of M5UnitHUB
+  @brief Main header of M5Unit-HUB
 
   @mainpage M5Unit-HUB
   Library for UnitHUB using M5UnitUnified.
