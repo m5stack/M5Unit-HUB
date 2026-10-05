@@ -61,3 +61,6 @@ dependencies.lock
 
 # clangd LSP (per-developer, environment dependent)
 .clangd
+
+# clangd index cache
+.cache/
