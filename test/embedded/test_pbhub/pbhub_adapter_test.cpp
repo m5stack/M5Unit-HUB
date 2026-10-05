@@ -142,11 +142,24 @@ TEST_F(TestPbHubAdapter, Child)
 // Connecting the PbHub with the handle uses the delegating child adapter (ImplType::ESPIDFMasterBus)
 class TestPbHubAdapterMasterBus : public TestPbHubAdapter {
 protected:
+    virtual void SetUp() override
+    {
+        // GROVE is not driven by Wire on these boards (NessoN1: SoftwareI2C, NanoC6/NanoH2: Ex_I2C)
+        const auto board = M5.getBoard();
+        if (board == m5::board_t::board_ArduinoNessoN1 || board == m5::board_t::board_M5NanoC6 ||
+            board == m5::board_t::board_M5NanoH2) {
+            GTEST_SKIP() << "GROVE is not driven by Wire on this board";
+        }
+        TestPbHubAdapter::SetUp();
+    }
+
     virtual bool begin() override
     {
         auto pin_num_sda = M5.getPin(m5::pin_name_t::port_a_sda);
         auto pin_num_scl = M5.getPin(m5::pin_name_t::port_a_scl);
-        Wire.end();
+        if (i2cIsInit(0)) {
+            Wire.end();
+        }
         if (!Wire.begin(pin_num_sda, pin_num_scl, unit->component_config().clock)) {
             M5_LOGE("Failed to begin Wire");
             return false;
