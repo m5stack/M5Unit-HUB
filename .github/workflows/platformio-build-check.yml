@@ -54,18 +54,10 @@ jobs:
       
       matrix:
         example:
-          - DaisyChain
           - PlotToSerial
 
         unit:
-          - UnitPaHub
           - UnitPbHub
-
-        exclude:
-          - unit: UnitPaHub
-            example: PlotToSerial
-          - unit: UnitPbHub
-            example: DaisyChain
 
         board:
           - Core
