@@ -10,10 +10,8 @@
 #ifndef M5_UNIT_HUB_UNIT_PBHUB_HPP
 #define M5_UNIT_HUB_UNIT_PBHUB_HPP
 
-#include <M5UnitComponent.hpp>
 #include <array>
-
-class TwoWire;
+#include <M5UnitComponent.hpp>
 
 namespace m5 {
 namespace unit {
@@ -29,9 +27,9 @@ namespace pbhub {
   @brief LED control type
  */
 enum class LEDMode : uint8_t {
-    WS28xx,  //!< WS28xx, SK6812 (as default)
-    SK6822,  //!< SK6822, APA106
-    Unknown = 0xFF,
+    WS28xx,          //!< WS28xx, SK6812 (as default)
+    SK6822,          //!< SK6822, APA106
+    Unknown = 0xFF,  //!< Unknown (not yet read)
 };
 
 }  // namespace pbhub
@@ -56,6 +54,7 @@ public:
     //! @brief Constructor
     //! @param addr I2C address
     explicit UnitPbHub(const uint8_t addr = DEFAULT_ADDRESS);
+    //! @brief Destructor
     virtual ~UnitPbHub() = default;
 
     //! @brief Begin communication and detect hardware version
@@ -64,9 +63,9 @@ public:
 
     /*!
       @brief Get the firmware version
-      @retval == 0 No firmware version (means PbHub)
-      @retval == 0xFF Not determined because begin() has not been called.
-      @retval !=0 && !=0xFF Firmware version (means PbHub v1.1)
+      @return Firmware version (1 or later means PbHub v1.1)
+      @retval 0 No firmware version register (PbHub)
+      @retval 0xFF Not determined (begin() has not been called)
      */
     inline uint8_t firmwareVersion() const
     {
@@ -213,14 +212,14 @@ public:
       @brief Write the LED color to a specific channel
       @param ch Channel
       @param index LED index
-      @param rgb888  00000000RRRRRRRRGGGGGGGGBBBBBBBB 24bits color
+      @param rgb888  00000000RRRRRRRRGGGGGGGGBBBBBBBB 24-bit color
       @return True if successful
      */
     bool writeLEDColor(const uint8_t ch, const uint16_t index, const uint32_t rgb888);
     /*!
       @brief Fill the LED color to a specific channel
       @param ch Channel
-      @param rgb888  00000000RRRRRRRRGGGGGGGGBBBBBBBB 24bits color
+      @param rgb888  00000000RRRRRRRRGGGGGGGGBBBBBBBB 24-bit color
       @param first First position of the LEDs
       @param count Number of pixels to fill (To the end if zero)
       @return True if successful
@@ -374,7 +373,7 @@ protected:
     }
     inline bool is_pbhub() const
     {
-        return (_ver != 0xFF) && (_ver == 0);
+        return _ver == 0;
     }
     inline bool is_pbhub_v11() const
     {
