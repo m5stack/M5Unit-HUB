@@ -2,7 +2,7 @@ description: Library for M5Stack UNIT HUB using M5UnitUnified.
 url: https://github.com/m5stack/M5Unit-HUB
 issues: https://github.com/m5stack/M5Unit-HUB/issues
 license: MIT
-version: "0.3.1"
+version: "0.4.0"
 
 dependencies:
   idf: ">=5.1"
