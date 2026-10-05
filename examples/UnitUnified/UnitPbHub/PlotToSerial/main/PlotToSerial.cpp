@@ -43,8 +43,8 @@ void setup()
         M5_LOGW("%s", Units.debugInfo().c_str());
         m5::unit::wiring::failStop();
     }
-    M5_LOGI("M5UnitUnified has been begun");
-    M5_LOGI("%s", Units.debugInfo().c_str());
+    M5.Log.printf("M5UnitUnified initialized\n");
+    M5.Log.printf("%s\n", Units.debugInfo().c_str());
 
     // 0: PbHub, 1 or later: PbHub v1.1
     M5.Log.printf("Firmware version:%u\n", hub.firmwareVersion());
