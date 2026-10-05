@@ -66,8 +66,14 @@ protected:
             SCOPED_TRACE(s);
 
             auto& child = children[ch];
-            ASSERT_NE(child.adapter(), nullptr);
+            EXPECT_NE(child.adapter(), nullptr);
+            if (!child.adapter()) {
+                continue;
+            }
             EXPECT_EQ(child.adapter()->type(), Adapter::Type::I2C);
+            if (child.adapter()->type() != Adapter::Type::I2C) {
+                continue;
+            }
             auto ad = static_cast<AdapterI2C*>(child.adapter());
             EXPECT_EQ(ad->implType(), expected);
             EXPECT_EQ(ad->address(), unit->address());
@@ -120,7 +126,10 @@ TEST_F(TestPbHubAdapter, Child)
     SCOPED_TRACE(ustr);
 
     auto parent = static_cast<AdapterI2C*>(unit->adapter());
-    ASSERT_NE(parent, nullptr);
+    EXPECT_NE(parent, nullptr);
+    if (!parent) {
+        return;
+    }
     M5_LOGI("Parent impl type:%u", static_cast<uint8_t>(parent->implType()));
 
     check_child_adapters(parent->implType());
@@ -156,7 +165,10 @@ TEST_F(TestPbHubAdapterMasterBus, Child)
     SCOPED_TRACE(ustr);
 
     auto parent = static_cast<AdapterI2C*>(unit->adapter());
-    ASSERT_NE(parent, nullptr);
+    EXPECT_NE(parent, nullptr);
+    if (!parent) {
+        return;
+    }
     EXPECT_EQ(parent->implType(), AdapterI2C::ImplType::ESPIDFMasterBus);
 
     check_child_adapters(AdapterI2C::ImplType::ESPIDFMasterBus);
