@@ -70,6 +70,7 @@ jobs:
           - AtomS3
           - AtomS3R
           - NanoC6
+          - NanoH2
           - StickCPlus
           - StickCPlus2
           - StickS3
