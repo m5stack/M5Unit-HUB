@@ -11,7 +11,6 @@
 #define M5_UNIT_PAHUB_UNIT_PCA9548AP_HPP
 
 #include <M5UnitComponent.hpp>
-#include <array>
 
 namespace m5 {
 namespace unit {
@@ -30,6 +29,7 @@ public:
     //! @brief Constructor
     //! @param addr I2C address
     explicit UnitPCA9548AP(const uint8_t addr = DEFAULT_ADDRESS);
+    //! @brief Destructor
     virtual ~UnitPCA9548AP() = default;
 
     /*!
@@ -53,7 +53,7 @@ protected:
     virtual std::shared_ptr<Adapter> ensure_adapter(const uint8_t ch) override;
 
 protected:
-    uint8_t _current{0xFF};  // current channel 0 ~ MAX_CHANNEL
+    uint8_t _current{0xFF};  // Current channel (0 ~ MAX_CHANNEL - 1), 0xFF if none selected
 };
 
 }  // namespace unit
