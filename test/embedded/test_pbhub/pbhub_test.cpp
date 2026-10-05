@@ -181,10 +181,8 @@ TEST_F(TestPbHub, LED)
     EXPECT_FALSE(unit->writeLEDCount(255, 1));
 
     const uint32_t color = esp_random();
-    {
-        auto s = m5::utility::formatString("color:%08X", color);
-        SCOPED_TRACE(s);
-    }
+    auto cs              = m5::utility::formatString("color:%08X", color);
+    SCOPED_TRACE(cs);
     for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
         auto s = m5::utility::formatString("CH:%u", ch);
         SCOPED_TRACE(s);
@@ -238,6 +236,13 @@ TEST_F(TestPbHub, LED)
         EXPECT_FALSE(unit->writeLEDMode(LEDMode::WS28xx));
         EXPECT_FALSE(unit->readLEDMode(m));
         EXPECT_EQ(m, LEDMode::Unknown);
+    }
+
+    // Turn off the LEDs
+    for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
+        auto s = m5::utility::formatString("CH:%u", ch);
+        SCOPED_TRACE(s);
+        EXPECT_TRUE(unit->fillLEDColor(ch, 0));
     }
 }
 
