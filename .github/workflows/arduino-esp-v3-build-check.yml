@@ -93,7 +93,7 @@ jobs:
 #          - m5stack_unit_cams3
 
         platform-version:
-          - 3.3.6
+          - 3.3.12
 
         platform:
           - esp32
