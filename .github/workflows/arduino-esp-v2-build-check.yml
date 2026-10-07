@@ -2,7 +2,7 @@ name: Build(arduino-esp32:2.x)
 
 env:
   SKETCH_NAMES_FIND_START: ./examples/UnitUnified
-  REQUIRED_LIBRARIES: M5Unified,M5UnitUnified,M5Unit-METER # example needs METER 
+  REQUIRED_LIBRARIES: M5Unified,M5UnitUnified
 
 on:
   push:
@@ -58,19 +58,21 @@ jobs:
           - https://espressif.github.io/arduino-esp32/package_esp32_index.json
 
         sketch:
-          - DaisyChain
+          - PlotToSerial
 
         unit:
-          - UnitPaHub
+          - UnitPbHub
 
+        # Reduced from 7 to 2 boards: one per chip (core 2.0.x has no C6 / H2 / P4).
+        # The others differ only in variant headers.
         board:
-          - m5stack-atom
-          - m5stack-atoms3
+#          - m5stack-atom  # ESP32: represented by Core
+#          - m5stack-atoms3  # ESP32-S3: represented by CoreS3
           - m5stack-core-esp32
-          - m5stack-core2
-          - m5stack-coreink
+#          - m5stack-core2  # ESP32: represented by Core
+#          - m5stack-coreink  # ESP32: represented by Core
           - m5stack-cores3
-          - m5stack-fire
+#          - m5stack-fire  # ESP32: represented by Core
 
         platform-version:
           - 2.0.17

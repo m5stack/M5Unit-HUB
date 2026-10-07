@@ -23,9 +23,6 @@ constexpr uint8_t ch_table[UnitPbHub::MAX_CHANNEL] = {0, 1, 2, 3, 4, 6};
 
 uint8_t make_reg(const uint8_t base, const uint8_t ch, const uint8_t offset = 0)
 {
-    //    M5_LIB_LOGD(">>>> Reg:%02X <= base:%02x ch:%u index:%u",
-    //                ((ch < UnitPbHub::MAX_CHANNEL) ? (base + offset) | (0x40 + 0x10 * ch_table[ch]) : 0x00), base, ch,
-    //                offset);
     return (ch < UnitPbHub::MAX_CHANNEL) ? (base + offset) | (0x40 + 0x10 * ch_table[ch]) : 0x00;
 }
 
@@ -37,13 +34,22 @@ constexpr uint16_t MAX_PULSE{2500};
 
 inline bool valid_angle(const uint8_t a)
 {
-    //    return a >= MIN_ANGLE && a <= MAX_ANGLE;
+    // No lower-bound check: uint8_t cannot be below MIN_ANGLE (0)
     return a <= MAX_ANGLE;
 }
 
 inline bool valid_pulse(const uint16_t p)
 {
     return p >= MIN_PULSE && p <= MAX_PULSE;
+}
+
+// The firmware outputs the LEDs by WS2812 bit-bang with the I2C interrupts disabled, which stretches the clock of
+// the next transaction (~40us/LED + 100us reset). Wait for it, since some I2C implementations time out on it
+inline void delay_led_output(const uint16_t num_leds)
+{
+    if (num_leds) {
+        m5::utility::delayMicroseconds(num_leds * 40U + 100U);
+    }
 }
 
 }  // namespace
@@ -54,6 +60,7 @@ namespace unit {
 // Adapter For children
 class AdapterPbHub : public AdapterI2C {
 public:
+#if defined(ARDUINO)
     class PbHubWireImpl : public AdapterI2C::WireImpl {
     public:
         PbHubWireImpl(TwoWire& wire, const uint8_t addr, const uint32_t clock, const uint8_t ch)
@@ -61,14 +68,19 @@ public:
         {
         }
 
-        // For write LED color
-        // Pass to PbHub API
+        // Forward RGB writes from the child unit to the PbHub LED color API
         virtual m5::hal::error::error_t writeWithTransaction(const uint8_t* rgb888, const size_t len,
                                                              const uint32_t stop) override
         {
-            const uint8_t reg = LED_COLOR_SINGLE_REG + 0x40 + (0x10 * (_channel == 5 ? 6 : _channel));
+            const uint8_t reg = make_reg(LED_COLOR_SINGLE_REG, _channel);
             const uint8_t* p  = rgb888;
-            for (uint_fast16_t i = 0; i < len / 3; ++i) {
+            // The firmware handles up to MAX_LED_COUNT LEDs per channel, so the rest are not written
+            const size_t num = std::min<size_t>(len / 3, UnitPbHub::MAX_LED_COUNT);
+            if (len / 3 > num) {
+                M5_LIB_LOGW("Too many LEDs %u, only the first %u are written", static_cast<unsigned>(len / 3),
+                            UnitPbHub::MAX_LED_COUNT);
+            }
+            for (uint_fast16_t i = 0; i < num; ++i) {
                 std::array<uint8_t, 5> buf{};
                 buf[0]   = i & 0xFF;
                 buf[1]   = i >> 8;
@@ -79,6 +91,7 @@ public:
                 if (ret != m5::hal::error::error_t::OK) {
                     return ret;
                 }
+                delay_led_output(i + 1U);
             }
             return m5::hal::error::error_t::OK;
         }
@@ -93,15 +106,13 @@ public:
         }
         inline virtual m5::hal::error::error_t writeDigitalRX(const bool high) override
         {
-            const uint8_t reg  = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_RX);
-            const uint8_t v[1] = {high};
-            return AdapterI2C::WireImpl::writeWithTransaction(reg, v, 1, true);
+            return write_digital(IO_RX, high);
         }
         inline virtual m5::hal::error::error_t readDigitalRX(bool& high) override
         {
             return read_digital(high, IO_RX);
         }
-        inline virtual m5::hal::error::error_t writeAnalogRX(const uint16_t v) override
+        inline virtual m5::hal::error::error_t writeAnalogRX(const uint16_t) override
         {
             return m5::hal::error::error_t::UNKNOWN_ERROR;
         }
@@ -117,19 +128,17 @@ public:
         }
         inline virtual m5::hal::error::error_t writeDigitalTX(const bool high) override
         {
-            const uint8_t reg  = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_TX);
-            const uint8_t v[1] = {high};
-            return AdapterI2C::WireImpl::writeWithTransaction(reg, v, 1, true);
+            return write_digital(IO_TX, high);
         }
         inline virtual m5::hal::error::error_t readDigitalTX(bool& high) override
         {
             return read_digital(high, IO_TX);
         }
-        inline virtual m5::hal::error::error_t writeAnalogTX(const uint16_t v) override
+        inline virtual m5::hal::error::error_t writeAnalogTX(const uint16_t) override
         {
             return m5::hal::error::error_t::UNKNOWN_ERROR;
         }
-        inline virtual m5::hal::error::error_t readAnalogTX(uint16_t& v) override
+        inline virtual m5::hal::error::error_t readAnalogTX(uint16_t&) override
         {
             M5_LIB_LOGE("Cannot read analog1");
             return m5::hal::error::error_t::UNKNOWN_ERROR;
@@ -148,8 +157,6 @@ public:
             high              = true;
             uint8_t v{};
             auto err = read_register8(reg, v);
-
-            //            M5_LIB_LOGE(">>>> R:%02X res:%u ch:%u io:%u", reg, err, _channel, io);
 
             if (err == m5::hal::error::error_t::OK) {
                 high = v;
@@ -187,6 +194,7 @@ public:
     private:
         uint8_t _channel{};
     };
+#endif
 
     // I2C_Class version: reuses I2CClassImpl for transport, adds PbHub GPIO overrides
     class PbHubI2CClassImpl : public AdapterI2C::I2CClassImpl {
@@ -206,15 +214,13 @@ public:
         }
         inline virtual m5::hal::error::error_t writeDigitalRX(const bool high) override
         {
-            const uint8_t reg  = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_RX);
-            const uint8_t v[1] = {high};
-            return AdapterI2C::I2CClassImpl::writeWithTransaction(reg, v, 1, true);
+            return write_digital(IO_RX, high);
         }
         inline virtual m5::hal::error::error_t readDigitalRX(bool& high) override
         {
             return read_digital(high, IO_RX);
         }
-        inline virtual m5::hal::error::error_t writeAnalogRX(const uint16_t v) override
+        inline virtual m5::hal::error::error_t writeAnalogRX(const uint16_t) override
         {
             return m5::hal::error::error_t::UNKNOWN_ERROR;
         }
@@ -230,31 +236,35 @@ public:
         }
         inline virtual m5::hal::error::error_t writeDigitalTX(const bool high) override
         {
-            const uint8_t reg  = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_TX);
-            const uint8_t v[1] = {high};
-            return AdapterI2C::I2CClassImpl::writeWithTransaction(reg, v, 1, true);
+            return write_digital(IO_TX, high);
         }
         inline virtual m5::hal::error::error_t readDigitalTX(bool& high) override
         {
             return read_digital(high, IO_TX);
         }
-        inline virtual m5::hal::error::error_t writeAnalogTX(const uint16_t v) override
+        inline virtual m5::hal::error::error_t writeAnalogTX(const uint16_t) override
         {
             return m5::hal::error::error_t::UNKNOWN_ERROR;
         }
-        inline virtual m5::hal::error::error_t readAnalogTX(uint16_t& v) override
+        inline virtual m5::hal::error::error_t readAnalogTX(uint16_t&) override
         {
             M5_LIB_LOGE("Cannot read analog1");
             return m5::hal::error::error_t::UNKNOWN_ERROR;
         }
 
-        // For write LED color
+        // Forward RGB writes from the child unit to the PbHub LED color API
         virtual m5::hal::error::error_t writeWithTransaction(const uint8_t* rgb888, const size_t len,
                                                              const uint32_t stop) override
         {
-            const uint8_t reg = LED_COLOR_SINGLE_REG + 0x40 + (0x10 * (_channel == 5 ? 6 : _channel));
+            const uint8_t reg = make_reg(LED_COLOR_SINGLE_REG, _channel);
             const uint8_t* p  = rgb888;
-            for (uint_fast16_t i = 0; i < len / 3; ++i) {
+            // The firmware handles up to MAX_LED_COUNT LEDs per channel, so the rest are not written
+            const size_t num = std::min<size_t>(len / 3, UnitPbHub::MAX_LED_COUNT);
+            if (len / 3 > num) {
+                M5_LIB_LOGW("Too many LEDs %u, only the first %u are written", static_cast<unsigned>(len / 3),
+                            UnitPbHub::MAX_LED_COUNT);
+            }
+            for (uint_fast16_t i = 0; i < num; ++i) {
                 std::array<uint8_t, 5> buf{};
                 buf[0]   = i & 0xFF;
                 buf[1]   = i >> 8;
@@ -265,6 +275,7 @@ public:
                 if (ret != m5::hal::error::error_t::OK) {
                     return ret;
                 }
+                delay_led_output(i + 1U);
             }
             return m5::hal::error::error_t::OK;
         }
@@ -345,15 +356,13 @@ public:
         }
         inline virtual m5::hal::error::error_t writeDigitalRX(const bool high) override
         {
-            const uint8_t reg  = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_RX);
-            const uint8_t v[1] = {high};
-            return AdapterI2C::BusImpl::writeWithTransaction(reg, v, 1, true);
+            return write_digital(IO_RX, high);
         }
         inline virtual m5::hal::error::error_t readDigitalRX(bool& high) override
         {
             return read_digital(high, IO_RX);
         }
-        inline virtual m5::hal::error::error_t writeAnalogRX(const uint16_t v) override
+        inline virtual m5::hal::error::error_t writeAnalogRX(const uint16_t) override
         {
             return m5::hal::error::error_t::UNKNOWN_ERROR;
         }
@@ -368,19 +377,17 @@ public:
         }
         inline virtual m5::hal::error::error_t writeDigitalTX(const bool high) override
         {
-            const uint8_t reg  = make_reg(WRITE_DIGITAL_0_REG, _channel, IO_TX);
-            const uint8_t v[1] = {high};
-            return AdapterI2C::BusImpl::writeWithTransaction(reg, v, 1, true);
+            return write_digital(IO_TX, high);
         }
         inline virtual m5::hal::error::error_t readDigitalTX(bool& high) override
         {
             return read_digital(high, IO_TX);
         }
-        inline virtual m5::hal::error::error_t writeAnalogTX(const uint16_t v) override
+        inline virtual m5::hal::error::error_t writeAnalogTX(const uint16_t) override
         {
             return m5::hal::error::error_t::UNKNOWN_ERROR;
         }
-        inline virtual m5::hal::error::error_t readAnalogTX(uint16_t& v) override
+        inline virtual m5::hal::error::error_t readAnalogTX(uint16_t&) override
         {
             M5_LIB_LOGE("Cannot read analog1");
             return m5::hal::error::error_t::UNKNOWN_ERROR;
@@ -389,9 +396,15 @@ public:
         virtual m5::hal::error::error_t writeWithTransaction(const uint8_t* rgb888, const size_t len,
                                                              const uint32_t stop) override
         {
-            const uint8_t reg = LED_COLOR_SINGLE_REG + 0x40 + (0x10 * (_channel == 5 ? 6 : _channel));
+            const uint8_t reg = make_reg(LED_COLOR_SINGLE_REG, _channel);
             const uint8_t* p  = rgb888;
-            for (uint_fast16_t i = 0; i < len / 3; ++i) {
+            // The firmware handles up to MAX_LED_COUNT LEDs per channel, so the rest are not written
+            const size_t num = std::min<size_t>(len / 3, UnitPbHub::MAX_LED_COUNT);
+            if (len / 3 > num) {
+                M5_LIB_LOGW("Too many LEDs %u, only the first %u are written", static_cast<unsigned>(len / 3),
+                            UnitPbHub::MAX_LED_COUNT);
+            }
+            for (uint_fast16_t i = 0; i < num; ++i) {
                 std::array<uint8_t, 5> buf{};
                 buf[0]   = i & 0xFF;
                 buf[1]   = i >> 8;
@@ -402,6 +415,7 @@ public:
                 if (ret != m5::hal::error::error_t::OK) {
                     return ret;
                 }
+                delay_led_output(i + 1U);
             }
             return m5::hal::error::error_t::OK;
         }
@@ -462,6 +476,219 @@ public:
     AdapterPbHub(m5::hal::bus::Bus& bus, const uint8_t addr, const uint32_t clock, const uint8_t ch)
         : AdapterPbHub(&bus, addr, clock, ch)
     {
+    }
+
+    // Delegate version: transfers through a duplicate of the parent impl, adds PbHub GPIO overrides
+    // Used for the impl types that have no dedicated PbHub impl (ESP-IDF native I2C drivers)
+    class PbHubDelegateImpl : public AdapterI2C::I2CImpl {
+    public:
+        PbHubDelegateImpl(AdapterI2C::I2CImpl* impl, const uint8_t ch)
+            : AdapterI2C::I2CImpl(impl->address(), impl->clock()), _impl{impl}, _channel{ch}
+        {
+        }
+
+        static constexpr uint8_t IO_RX{0};
+        static constexpr uint8_t IO_TX{1};
+
+        inline virtual void setAddress(const uint8_t addr) override
+        {
+            AdapterI2C::I2CImpl::setAddress(addr);
+            _impl->setAddress(addr);
+        }
+        inline virtual void setClock(const uint32_t clock) override
+        {
+            AdapterI2C::I2CImpl::setClock(clock);
+            _impl->setClock(clock);
+        }
+        inline virtual int16_t scl() const override
+        {
+            return _impl->scl();
+        }
+        inline virtual int16_t sda() const override
+        {
+            return _impl->sda();
+        }
+        inline virtual bool begin() override
+        {
+            return _impl->begin();
+        }
+        inline virtual bool end() override
+        {
+            return _impl->end();
+        }
+        inline virtual m5::hal::error::error_t wakeup() override
+        {
+            return _impl->wakeup();
+        }
+        inline virtual AdapterI2C::I2CImpl* duplicate(const uint8_t addr) override
+        {
+            return _impl->duplicate(addr);
+        }
+        inline virtual ImplType implType() const override
+        {
+            return _impl->implType();
+        }
+        inline virtual TwoWire* getWire() override
+        {
+            return _impl->getWire();
+        }
+        inline virtual m5::hal::bus::Bus* getBus() override
+        {
+            return _impl->getBus();
+        }
+        inline virtual m5::I2C_Class* getI2CClass() override
+        {
+            return _impl->getI2CClass();
+        }
+
+        inline virtual m5::hal::error::error_t readWithTransaction(uint8_t* data, const size_t len) override
+        {
+            return _impl->readWithTransaction(data, len);
+        }
+        inline virtual m5::hal::error::error_t writeWithTransaction(const uint8_t reg, const uint8_t* data,
+                                                                    const size_t len, const uint32_t stop) override
+        {
+            return _impl->writeWithTransaction(reg, data, len, stop);
+        }
+        inline virtual m5::hal::error::error_t writeWithTransaction(const uint16_t reg, const uint8_t* data,
+                                                                    const size_t len, const uint32_t stop) override
+        {
+            return _impl->writeWithTransaction(reg, data, len, stop);
+        }
+        inline virtual m5::hal::error::error_t generalCall(const uint8_t* data, const size_t len) override
+        {
+            return _impl->generalCall(data, len);
+        }
+
+        inline virtual m5::hal::error::error_t pinModeRX(const gpio::Mode) override
+        {
+            return m5::hal::error::error_t::OK;
+        }
+        inline virtual m5::hal::error::error_t writeDigitalRX(const bool high) override
+        {
+            return write_digital(IO_RX, high);
+        }
+        inline virtual m5::hal::error::error_t readDigitalRX(bool& high) override
+        {
+            return read_digital(high, IO_RX);
+        }
+        inline virtual m5::hal::error::error_t writeAnalogRX(const uint16_t) override
+        {
+            return m5::hal::error::error_t::UNKNOWN_ERROR;
+        }
+        inline virtual m5::hal::error::error_t readAnalogRX(uint16_t& v) override
+        {
+            const uint8_t reg = make_reg(READ_ANALOG_0_REG, _channel);
+            return reg ? read_register16LE(reg, v) : m5::hal::error::error_t::INVALID_ARGUMENT;
+        }
+        inline virtual m5::hal::error::error_t pinModeTX(const gpio::Mode) override
+        {
+            return m5::hal::error::error_t::OK;
+        }
+        inline virtual m5::hal::error::error_t writeDigitalTX(const bool high) override
+        {
+            return write_digital(IO_TX, high);
+        }
+        inline virtual m5::hal::error::error_t readDigitalTX(bool& high) override
+        {
+            return read_digital(high, IO_TX);
+        }
+        inline virtual m5::hal::error::error_t writeAnalogTX(const uint16_t) override
+        {
+            return m5::hal::error::error_t::UNKNOWN_ERROR;
+        }
+        inline virtual m5::hal::error::error_t readAnalogTX(uint16_t&) override
+        {
+            M5_LIB_LOGE("Cannot read analog1");
+            return m5::hal::error::error_t::UNKNOWN_ERROR;
+        }
+
+        // Forward RGB writes from the child unit to the PbHub LED color API
+        virtual m5::hal::error::error_t writeWithTransaction(const uint8_t* rgb888, const size_t len,
+                                                             const uint32_t stop) override
+        {
+            const uint8_t reg = make_reg(LED_COLOR_SINGLE_REG, _channel);
+            const uint8_t* p  = rgb888;
+            // The firmware handles up to MAX_LED_COUNT LEDs per channel, so the rest are not written
+            const size_t num = std::min<size_t>(len / 3, UnitPbHub::MAX_LED_COUNT);
+            if (len / 3 > num) {
+                M5_LIB_LOGW("Too many LEDs %u, only the first %u are written", static_cast<unsigned>(len / 3),
+                            UnitPbHub::MAX_LED_COUNT);
+            }
+            for (uint_fast16_t i = 0; i < num; ++i) {
+                std::array<uint8_t, 5> buf{};
+                buf[0]   = i & 0xFF;
+                buf[1]   = i >> 8;
+                buf[2]   = *p++;
+                buf[3]   = *p++;
+                buf[4]   = *p++;
+                auto ret = _impl->writeWithTransaction(reg, buf.data(), buf.size(), stop);
+                if (ret != m5::hal::error::error_t::OK) {
+                    return ret;
+                }
+                delay_led_output(i + 1U);
+            }
+            return m5::hal::error::error_t::OK;
+        }
+
+    protected:
+        m5::hal::error::error_t write_digital(const uint8_t io, const uint8_t val)
+        {
+            const uint8_t reg = make_reg(WRITE_DIGITAL_0_REG, _channel, io);
+            return _impl->writeWithTransaction(reg, &val, 1, true);
+        }
+        m5::hal::error::error_t read_digital(bool& high, const uint8_t io)
+        {
+            const uint8_t reg = make_reg(READ_DIGITAL_0_REG, _channel, io);
+            high              = true;
+            uint8_t v{};
+            auto err = read_register8(reg, v);
+            if (err == m5::hal::error::error_t::OK) {
+                high = v;
+            }
+            return err;
+        }
+        m5::hal::error::error_t read_register8(const uint8_t reg, uint8_t& v)
+        {
+            v        = 0;
+            auto err = _impl->writeWithTransaction(reg, nullptr, 0U, true);
+            if (err == m5::hal::error::error_t::OK) {
+                uint8_t rbuf[1]{};
+                err = _impl->readWithTransaction(rbuf, 1);
+                if (err == m5::hal::error::error_t::OK) {
+                    v = rbuf[0];
+                }
+            }
+            return err;
+        }
+        m5::hal::error::error_t read_register16LE(const uint8_t reg, uint16_t& v)
+        {
+            v = 0;
+            m5::types::little_uint16_t lv{};
+            auto err = _impl->writeWithTransaction(reg, nullptr, 0U, true);
+            if (err == m5::hal::error::error_t::OK) {
+                err = _impl->readWithTransaction(lv.data(), 2);
+                if (err == m5::hal::error::error_t::OK) {
+                    v = lv.get();
+                }
+            }
+            return err;
+        }
+
+    private:
+        std::unique_ptr<AdapterI2C::I2CImpl> _impl{};
+        uint8_t _channel{};
+    };
+
+    // Duplicates the parent impl (same address) and delegates the transfers to it
+    AdapterPbHub(AdapterI2C::I2CImpl& parent, const uint8_t ch) : AdapterI2C()
+    {
+        auto dup = parent.duplicate(parent.address());
+        if (dup) {
+            _impl.reset(new PbHubDelegateImpl(dup, ch));
+        } else {
+            M5_LIB_LOGE("Failed to duplicate");
+        }
     }
 };
 
@@ -553,7 +780,6 @@ bool UnitPbHub::writeLEDColor(const uint8_t ch, const uint16_t index, const uint
     buf[2] = rgb888 >> 16;   // R
     buf[3] = rgb888 >> 8;    // G
     buf[4] = rgb888 & 0xff;  // B
-    // m5::utility::log::dump(buf.data(), buf.size(), false);
     if (reg && writeRegister(reg, buf.data(), buf.size())) {
         // Firmware outputs (index+1) LEDs via WS2812 bit-bang inside I2C ISR
         // with I2C peripheral interrupts disabled, causing clock stretching
@@ -570,7 +796,7 @@ bool UnitPbHub::fillLEDColor(const uint8_t ch, const uint32_t rgb888, const uint
     const uint16_t num = count ? count : (ch < MAX_CHANNEL && _numLED[ch] > first) ? (_numLED[ch] - first) : 0;
 
     if (first + num > MAX_LED_COUNT) {
-        M5_LIB_LOGE("Too many LEDs %u-%u/%u", first, count, MAX_LED_COUNT);
+        M5_LIB_LOGE("Too many LEDs %u-%u/%u", first, num, MAX_LED_COUNT);
         return false;
     }
 
@@ -582,12 +808,11 @@ bool UnitPbHub::fillLEDColor(const uint8_t ch, const uint32_t rgb888, const uint
     buf[4] = rgb888 >> 16;   // R
     buf[5] = rgb888 >> 8;    // G
     buf[6] = rgb888 & 0xff;  // B
-    // m5::utility::log::dump(buf.data(), buf.size(), false);
     if (reg && writeRegister(reg, buf.data(), buf.size())) {
         // Firmware outputs min(first+num, _numLED[ch]) LEDs via WS2812 bit-bang inside I2C ISR
         // with I2C peripheral interrupts disabled, causing clock stretching
         // on the next transaction (~40µs/LED + 100µs reset).
-        uint16_t output = (ch < MAX_CHANNEL) ? std::min<uint16_t>(first + num, _numLED[ch]) : num;
+        const uint16_t output = (ch < MAX_CHANNEL) ? std::min<uint16_t>(first + num, _numLED[ch]) : num;
         wait_led_output(output);
         return true;
     }
@@ -603,7 +828,7 @@ bool UnitPbHub::writeLEDBrightness(const uint8_t ch, const uint8_t value)
 bool UnitPbHub::writeLEDMode(const pbhub::LEDMode m)
 {
     if (!is_firmware_2_or_later()) {
-        M5_LIB_LOGE("Not support this API. Need firmware version 2 or later (%u)", _ver);
+        M5_LIB_LOGE("This API is not supported. Need firmware version 2 or later (%u)", _ver);
         return false;
     }
     return (m != LEDMode::Unknown) && writeRegister8(LED_MODE_REG, m5::stl::to_underlying(m));
@@ -614,7 +839,7 @@ bool UnitPbHub::readLEDMode(pbhub::LEDMode& m)
     m = LEDMode::Unknown;
 
     if (!is_firmware_2_or_later()) {
-        M5_LIB_LOGE("Not support this API. Need firmware version 2 or later (%u)", _ver);
+        M5_LIB_LOGE("This API is not supported. Need firmware version 2 or later (%u)", _ver);
         return false;
     }
 
@@ -643,42 +868,51 @@ bool UnitPbHub::changeI2CAddress(const uint8_t addr)
         return false;
     }
     if (writeRegister8(I2C_ADDRESS_REG, addr) && changeAddress(addr)) {
-        // Wait wakeup
-        auto timeout_at = m5::utility::millis() + 1000;
+        // Wait until the device responds at the new address
+        const auto start_at = m5::utility::millis();
         do {
             m5::utility::delay(1);
             uint8_t v{};
             if (readRegister8(I2C_ADDRESS_REG, v, 0) && v == addr) {
                 return true;
             }
-        } while (m5::utility::millis() <= timeout_at);
+        } while (!m5::utility::hasElapsed(start_at, 1000));
     }
     return false;
 }
 
 void UnitPbHub::wait_led_output(const uint16_t num_leds) const
 {
-    if (num_leds) {
-        // WS2812 bit-bang: ~40µs/LED + ~100µs reset
-        m5::utility::delayMicroseconds(num_leds * 40U + 100U);
-    }
+    delay_led_output(num_leds);
 }
 
-//
 std::shared_ptr<Adapter> UnitPbHub::ensure_adapter(const uint8_t ch)
 {
     if (ch < MAX_CHANNEL) {
-        auto ad   = asAdapter<AdapterI2C>(Adapter::Type::I2C);
+        auto ad = asAdapter<AdapterI2C>(Adapter::Type::I2C);
+        if (!ad || !ad->impl()) {
+            M5_LIB_LOGE("No I2C adapter");
+            return std::make_shared<Adapter>();  // Empty adapter
+        }
         auto impl = ad->impl();
         switch (impl->implType()) {
+#if defined(ARDUINO)
             case AdapterI2C::ImplType::TwoWire:
                 return std::make_shared<AdapterPbHub>(*impl->getWire(), ad->address(), ad->clock(), ch);
+#endif
             case AdapterI2C::ImplType::I2CClass:
                 return std::make_shared<AdapterPbHub>(*impl->getI2CClass(), ad->address(), ad->clock(), ch);
             case AdapterI2C::ImplType::Bus:
                 return std::make_shared<AdapterPbHub>(impl->getBus(), ad->address(), ad->clock(), ch);
+#if defined(ESP_PLATFORM) && __has_include(<driver/i2c_master.h>)
+            case AdapterI2C::ImplType::ESPIDFMasterBus:
+                return std::make_shared<AdapterPbHub>(*impl, ch);
+#elif defined(ESP_PLATFORM)
+            case AdapterI2C::ImplType::ESPIDFLegacyBus:
+                return std::make_shared<AdapterPbHub>(*impl, ch);
+#endif
             default:
-                M5_LIB_LOGE("Unsupported adapter type %u", (unsigned)impl->implType());
+                M5_LIB_LOGE("Unsupported adapter type %u", static_cast<unsigned>(impl->implType()));
                 break;
         }
     } else {

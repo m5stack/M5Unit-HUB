@@ -1,0 +1,39 @@
+description: Library for M5Stack UNIT HUB using M5UnitUnified.
+url: https://github.com/m5stack/M5Unit-HUB
+issues: https://github.com/m5stack/M5Unit-HUB/issues
+license: MIT
+version: "0.4.0"
+
+dependencies:
+  idf: ">=5.1"
+  # M5UnitUnified is not yet on the ESP Component Registry, so reference the main
+  # branch via git (switch to a version constraint after publish).
+  m5stack/M5UnitUnified:
+    git: https://github.com/m5stack/M5UnitUnified.git
+    version: main
+  # src/ includes <M5Utility.hpp> directly, so it is declared here
+  # rather than relied upon as a transitive dependency of M5UnitUnified.
+  m5stack/M5Utility:
+    git: https://github.com/m5stack/M5Utility.git
+    version: main
+
+targets:
+  - esp32
+  - esp32s3
+  - esp32c3
+  - esp32c5
+  - esp32c6
+  - esp32h2
+  - esp32p4
+
+files:
+  exclude:
+    - "docs/**"
+    - "examples/**"
+    - "test/**"
+    - "boards/**"
+    - "platformio.ini"
+    - "library.json"
+    - "library.properties"
+    - ".clang-format"
+    - ".gitignore"

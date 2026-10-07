@@ -8,7 +8,7 @@
   @brief PCA9548AP Unit for M5UnitUnified
  */
 #include "unit_PCA9548AP.hpp"
-#include "m5_unit_component/adapter.hpp"
+#include <m5_unit_component/adapter.hpp>
 #include <M5Utility.hpp>
 
 using namespace m5::utility::mmh3;
@@ -17,7 +17,7 @@ using namespace m5::unit::types;
 namespace m5 {
 namespace unit {
 
-// class UnitPaHub
+// class UnitPCA9548AP
 const char UnitPCA9548AP::name[] = "UnitPCA9548AP";
 const types::uid_t UnitPCA9548AP::uid{"UnitPCA9548AP"_mmh3};
 const types::attr_t UnitPCA9548AP::attr{attribute::AccessI2C};
@@ -54,7 +54,6 @@ std::shared_ptr<Adapter> UnitPCA9548AP::ensure_adapter(const uint8_t ch)
 
 m5::hal::error::error_t UnitPCA9548AP::select_channel(const uint8_t ch)
 {
-    // M5_LIB_LOGV("Try current to %u =>  %u", _current, ch);
     if (ch < MAX_CHANNEL) {
         m5::hal::error::error_t ret{m5::hal::error::error_t::OK};
         if (ch != _current) {

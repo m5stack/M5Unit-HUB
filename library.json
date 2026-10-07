@@ -11,11 +11,13 @@
         "url": "https://github.com/m5stack/M5Unit-HUB.git"
     },
     "dependencies": {
-        "m5stack/M5UnitUnified": ">=0.4.4"
+        "m5stack/M5UnitUnified": ">=0.6.0",
+        "m5stack/M5Utility": ">=0.3.0"
     },
-    "version": "0.3.1",
+    "version": "0.4.0",
     "frameworks": [
-        "arduino"
+        "arduino",
+        "espidf"
     ],
     "platforms": [
         "espressif32"

@@ -54,30 +54,33 @@ jobs:
       
       matrix:
         example:
-          - DaisyChain
+          - PlotToSerial
 
         unit:
-          - UnitPaHub
+          - UnitPbHub
 
+        # Reduced from 19 to 7 boards: one per compile config (ESP32 / S3 / C6 / H2 / P4) plus StickS3 and
+        # Cardputer, which have their own build_flags. The others differ only in variant headers.
         board:
           - Core
-          - Core2
+#          - Core2  # ESP32: represented by Core
           - CoreS3
-          - Fire
-          - StampS3
-          - Dial
-          - Atom
-          - AtomS3
-          - AtomS3R
+#          - Fire  # ESP32: represented by Core
+#          - StampS3  # ESP32-S3: represented by CoreS3
+#          - Dial  # ESP32-S3: represented by CoreS3
+#          - Atom  # ESP32: represented by Core
+#          - AtomS3  # ESP32-S3: represented by CoreS3
+#          - AtomS3R  # ESP32-S3: represented by CoreS3
           - NanoC6
-          - StickCPlus
-          - StickCPlus2
+          - NanoH2
+#          - StickCPlus  # ESP32: represented by Core
+#          - StickCPlus2  # ESP32: represented by Core
           - StickS3
-          - Paper
-          - CoreInk
+#          - Paper  # ESP32: represented by Core
+#          - CoreInk  # ESP32: represented by Core
           - Cardputer
           - Tab5
-          - NessoN1
+#          - NessoN1  # ESP32-C6: represented by NanoC6
 
         framework:
           - Arduino
