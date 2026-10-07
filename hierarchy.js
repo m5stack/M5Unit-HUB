@@ -13,7 +13,7 @@ var hierarchy =
     [ "AdapterI2C::I2CClassImpl", null, [
       [ "m5::unit::AdapterPbHub::PbHubI2CClassImpl", "classm5_1_1unit_1_1_adapter_pb_hub_1_1_pb_hub_i2_c_class_impl.html", null ]
     ] ],
-    [ "AdapterI2C::WireImpl", null, [
-      [ "m5::unit::AdapterPbHub::PbHubWireImpl", "classm5_1_1unit_1_1_adapter_pb_hub_1_1_pb_hub_wire_impl.html", null ]
+    [ "AdapterI2C::I2CImpl", null, [
+      [ "m5::unit::AdapterPbHub::PbHubDelegateImpl", "classm5_1_1unit_1_1_adapter_pb_hub_1_1_pb_hub_delegate_impl.html", null ]
     ] ]
 ];
