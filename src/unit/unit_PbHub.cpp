@@ -74,7 +74,13 @@ public:
         {
             const uint8_t reg = make_reg(LED_COLOR_SINGLE_REG, _channel);
             const uint8_t* p  = rgb888;
-            for (uint_fast16_t i = 0; i < len / 3; ++i) {
+            // The firmware handles up to MAX_LED_COUNT LEDs per channel, so the rest are not written
+            const size_t num = std::min<size_t>(len / 3, UnitPbHub::MAX_LED_COUNT);
+            if (len / 3 > num) {
+                M5_LIB_LOGW("Too many LEDs %u, only the first %u are written", static_cast<unsigned>(len / 3),
+                            UnitPbHub::MAX_LED_COUNT);
+            }
+            for (uint_fast16_t i = 0; i < num; ++i) {
                 std::array<uint8_t, 5> buf{};
                 buf[0]   = i & 0xFF;
                 buf[1]   = i >> 8;
@@ -252,7 +258,13 @@ public:
         {
             const uint8_t reg = make_reg(LED_COLOR_SINGLE_REG, _channel);
             const uint8_t* p  = rgb888;
-            for (uint_fast16_t i = 0; i < len / 3; ++i) {
+            // The firmware handles up to MAX_LED_COUNT LEDs per channel, so the rest are not written
+            const size_t num = std::min<size_t>(len / 3, UnitPbHub::MAX_LED_COUNT);
+            if (len / 3 > num) {
+                M5_LIB_LOGW("Too many LEDs %u, only the first %u are written", static_cast<unsigned>(len / 3),
+                            UnitPbHub::MAX_LED_COUNT);
+            }
+            for (uint_fast16_t i = 0; i < num; ++i) {
                 std::array<uint8_t, 5> buf{};
                 buf[0]   = i & 0xFF;
                 buf[1]   = i >> 8;
@@ -386,7 +398,13 @@ public:
         {
             const uint8_t reg = make_reg(LED_COLOR_SINGLE_REG, _channel);
             const uint8_t* p  = rgb888;
-            for (uint_fast16_t i = 0; i < len / 3; ++i) {
+            // The firmware handles up to MAX_LED_COUNT LEDs per channel, so the rest are not written
+            const size_t num = std::min<size_t>(len / 3, UnitPbHub::MAX_LED_COUNT);
+            if (len / 3 > num) {
+                M5_LIB_LOGW("Too many LEDs %u, only the first %u are written", static_cast<unsigned>(len / 3),
+                            UnitPbHub::MAX_LED_COUNT);
+            }
+            for (uint_fast16_t i = 0; i < num; ++i) {
                 std::array<uint8_t, 5> buf{};
                 buf[0]   = i & 0xFF;
                 buf[1]   = i >> 8;
@@ -591,7 +609,13 @@ public:
         {
             const uint8_t reg = make_reg(LED_COLOR_SINGLE_REG, _channel);
             const uint8_t* p  = rgb888;
-            for (uint_fast16_t i = 0; i < len / 3; ++i) {
+            // The firmware handles up to MAX_LED_COUNT LEDs per channel, so the rest are not written
+            const size_t num = std::min<size_t>(len / 3, UnitPbHub::MAX_LED_COUNT);
+            if (len / 3 > num) {
+                M5_LIB_LOGW("Too many LEDs %u, only the first %u are written", static_cast<unsigned>(len / 3),
+                            UnitPbHub::MAX_LED_COUNT);
+            }
+            for (uint_fast16_t i = 0; i < num; ++i) {
                 std::array<uint8_t, 5> buf{};
                 buf[0]   = i & 0xFF;
                 buf[1]   = i >> 8;
@@ -772,7 +796,7 @@ bool UnitPbHub::fillLEDColor(const uint8_t ch, const uint32_t rgb888, const uint
     const uint16_t num = count ? count : (ch < MAX_CHANNEL && _numLED[ch] > first) ? (_numLED[ch] - first) : 0;
 
     if (first + num > MAX_LED_COUNT) {
-        M5_LIB_LOGE("Too many LEDs %u-%u/%u", first, count, MAX_LED_COUNT);
+        M5_LIB_LOGE("Too many LEDs %u-%u/%u", first, num, MAX_LED_COUNT);
         return false;
     }
 
@@ -804,7 +828,7 @@ bool UnitPbHub::writeLEDBrightness(const uint8_t ch, const uint8_t value)
 bool UnitPbHub::writeLEDMode(const pbhub::LEDMode m)
 {
     if (!is_firmware_2_or_later()) {
-        M5_LIB_LOGE("Not support this API. Need firmware version 2 or later (%u)", _ver);
+        M5_LIB_LOGE("This API is not supported. Need firmware version 2 or later (%u)", _ver);
         return false;
     }
     return (m != LEDMode::Unknown) && writeRegister8(LED_MODE_REG, m5::stl::to_underlying(m));
@@ -815,7 +839,7 @@ bool UnitPbHub::readLEDMode(pbhub::LEDMode& m)
     m = LEDMode::Unknown;
 
     if (!is_firmware_2_or_later()) {
-        M5_LIB_LOGE("Not support this API. Need firmware version 2 or later (%u)", _ver);
+        M5_LIB_LOGE("This API is not supported. Need firmware version 2 or later (%u)", _ver);
         return false;
     }
 
@@ -844,7 +868,7 @@ bool UnitPbHub::changeI2CAddress(const uint8_t addr)
         return false;
     }
     if (writeRegister8(I2C_ADDRESS_REG, addr) && changeAddress(addr)) {
-        // Wait wakeup
+        // Wait until the device responds at the new address
         const auto start_at = m5::utility::millis();
         do {
             m5::utility::delay(1);
