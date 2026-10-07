@@ -6,12 +6,12 @@
 /*
   UnitTest for the child adapter of UnitPaHub (UnitPCA9548AP)
 */
+#include <array>
 #include <gtest/gtest.h>
 #include <M5Unified.h>
 #include <M5UnitUnified.hpp>
 #include <googletest/test_template.hpp>
 #include <unit/unit_PCA9548AP.hpp>
-#include <array>
 
 using namespace m5::unit::googletest;
 using namespace m5::unit;
@@ -69,7 +69,7 @@ TEST_F(TestPCA9548APAdapter, ChildAdapter)
 {
     SCOPED_TRACE(ustr);
 
-    auto parent = static_cast<AdapterI2C*>(unit->adapter());
+    auto* const parent = static_cast<AdapterI2C*>(unit->adapter());
     EXPECT_NE(parent, nullptr);
     if (!parent) {
         return;
