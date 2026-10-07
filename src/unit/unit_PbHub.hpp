@@ -27,8 +27,8 @@ namespace pbhub {
   @brief LED control type
  */
 enum class LEDMode : uint8_t {
-    WS28xx,          //!< WS28xx, SK6812 (as default)
-    SK6822,          //!< SK6822, APA106
+    WS28xx  = 0,     //!< WS28xx, SK6812 (as default)
+    SK6822  = 1,     //!< SK6822, APA106
     Unknown = 0xFF,  //!< Unknown (not yet read)
 };
 
@@ -40,9 +40,9 @@ enum class LEDMode : uint8_t {
   @note Automatic identification of PbHub and PbHub v1.1
   @warning Not all Units with a black interface (PortB) support expansion through PbHUB.
   @warning PbHUB can only be applied to basic single-bus communication, through the I2C protocol
-  @warning to achieve basic digital read and write, analog Read and write.
-  @warning But for units such as Weight (built-in HX711) that not only need to read analog,
-  @warning but also depend on the timing of the Unit, PbHUB cannot be expanded.
+  @warning to achieve basic digital read and write, analog read and write.
+  @warning But for units such as Weight (built-in HX711) that need not only analog reads
+  @warning but also depend on the timing of the unit, PbHUB cannot be expanded.
  */
 class UnitPbHub : public Component {
     M5_UNIT_COMPONENT_HPP_BUILDER(UnitPbHub, 0x61);
@@ -203,15 +203,15 @@ public:
     /*!
       @brief Write the number of the LED to a specific channel
       @param ch Channel
-      @param num Number of the LEDs
+      @param num Number of the LEDs (0..MAX_LED_COUNT)
       @return True if successful
-      @warning Maximum LED is 74 for each channel
+      @warning Maximum is MAX_LED_COUNT (74) for each channel
      */
     bool writeLEDCount(const uint8_t ch, const uint16_t num);
     /*!
       @brief Write the LED color to a specific channel
       @param ch Channel
-      @param index LED index
+      @param index LED index (0..MAX_LED_COUNT-1)
       @param rgb888  00000000RRRRRRRRGGGGGGGGBBBBBBBB 24-bit color
       @return True if successful
      */
@@ -220,8 +220,8 @@ public:
       @brief Fill the LED color to a specific channel
       @param ch Channel
       @param rgb888  00000000RRRRRRRRGGGGGGGGBBBBBBBB 24-bit color
-      @param first First position of the LEDs
-      @param count Number of pixels to fill (To the end if zero)
+      @param first First LED index
+      @param count Number of pixels to fill (to the LED count set by writeLEDCount if zero)
       @return True if successful
      */
     bool fillLEDColor(const uint8_t ch, const uint32_t rgb888, const uint16_t first = 0, const uint16_t count = 0);
