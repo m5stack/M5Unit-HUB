@@ -66,8 +66,8 @@ TEST_F(TestPbHub, Analog)
 {
     SCOPED_TRACE(ustr);
 
-    auto ver = unit->firmwareVersion();
-    bool can = ver == 0x00;  // PbHub
+    const auto ver = unit->firmwareVersion();
+    const bool can = ver == 0x00;  // PbHub
     M5_LOGI("%02X writeAnalog %s", unit->firmwareVersion(), can ? "supported" : "NOT supported");
 
     for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
@@ -110,8 +110,8 @@ TEST_F(TestPbHub, PWM)
 {
     SCOPED_TRACE(ustr);
 
-    auto ver = unit->firmwareVersion();
-    bool can = ver != 0xFF && ver;  // PbHub v1.1
+    const auto ver = unit->firmwareVersion();
+    const bool can = ver != 0xFF && ver;  // PbHub v1.1
     M5_LOGI("%02X PWM %s", unit->firmwareVersion(), can ? "supported" : "NOT supported");
 
     if (can) {
@@ -162,8 +162,8 @@ TEST_F(TestPbHub, LED)
 {
     SCOPED_TRACE(ustr);
 
-    auto ver = unit->firmwareVersion();
-    bool can = ver != 0xFF && ver >= 2;  // PbHub v1.1 FW 2 or later
+    const auto ver = unit->firmwareVersion();
+    const bool can = ver != 0xFF && ver >= 2;  // PbHub v1.1 FW 2 or later
     M5_LOGI("%02X LED mode %s", unit->firmwareVersion(), can ? "supported" : "NOT supported");
 
     for (uint8_t ch = 0; ch < UnitPbHub::MAX_CHANNEL; ++ch) {
@@ -249,8 +249,8 @@ TEST_F(TestPbHub, LED)
 TEST_F(TestPbHub, Servo)
 {
     SCOPED_TRACE(ustr);
-    auto ver = unit->firmwareVersion();
-    bool can = ver != 0xFF && ver;  // PbHub v1.1
+    const auto ver = unit->firmwareVersion();
+    const bool can = ver != 0xFF && ver;  // PbHub v1.1
     M5_LOGI("%02X Servo %s", unit->firmwareVersion(), can ? "supported" : "NOT supported");
 
     if (can) {
@@ -350,7 +350,10 @@ TEST_F(TestPbHub, ChangeI2CAddress)
 {
     SCOPED_TRACE(ustr);
 
-    auto prev_ver = unit->firmwareVersion();
+    const auto prev_ver = unit->firmwareVersion();
+    if (prev_ver == 0) {
+        GTEST_SKIP() << "changeI2CAddress is supported only on PbHub v1.1 or later";
+    }
     uint8_t ver{};
 
     EXPECT_FALSE(unit->changeI2CAddress(0x07));  // Invalid
