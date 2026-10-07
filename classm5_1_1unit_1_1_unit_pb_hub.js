@@ -1,7 +1,6 @@
 var classm5_1_1unit_1_1_unit_pb_hub =
 [
     [ "UnitPbHub", "classm5_1_1unit_1_1_unit_pb_hub.html#a17183c1bc6bf04d16cfd92be597c3a47", null ],
-    [ "~UnitPbHub", "classm5_1_1unit_1_1_unit_pb_hub.html#a27fd8ca83aceeebbea0f983d42fb34e7", null ],
     [ "begin", "classm5_1_1unit_1_1_unit_pb_hub.html#a4eb1f28f398809a0ccfd0e31833005f6", null ],
     [ "changeI2CAddress", "classm5_1_1unit_1_1_unit_pb_hub.html#af2e8f7bf78f297c70fda21d7710697bf", null ],
     [ "fillLEDColor", "classm5_1_1unit_1_1_unit_pb_hub.html#ac0c9f277ecda8e4c5ab2806a2abb910a", null ],
