@@ -45,6 +45,11 @@ Units that can be connected through a hub have an example in their own library:
 - `ViaPaHub`: I2C units through UnitPaHub / UnitPaHub2
 - `ViaPbHub`: GPIO units (digital / analog / PWM / servo / RGB LED) through UnitPbHub
 
+### I2C clock of units through PaHub
+> **NOTE:** Set the PaHub's `component_config().clock` to the lowest clock of the units connected to it, before adding
+> the PaHub. The channel select is sent at the PaHub's clock, and a read that is not preceded by a write runs at the
+> clock left by the last transfer on the bus.
+
 ### For ESP-IDF settings
 > **NOTE:** The ESP-IDF native build (`idf.py`) targets ESP-IDF **5.1 or later** (5.x and 6.x).
 
