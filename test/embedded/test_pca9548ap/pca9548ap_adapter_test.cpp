@@ -6,6 +6,7 @@
 /*
   UnitTest for the child adapter of UnitPaHub (UnitPCA9548AP)
 */
+#include <algorithm>
 #include <array>
 #include <gtest/gtest.h>
 #include <M5Unified.h>
@@ -64,7 +65,8 @@ protected:
     std::array<UnitPaHubChild, UnitPCA9548AP::MAX_CHANNEL> children{};
 };
 
-// Each child adapter is a duplicate of the parent adapter with the address of the child
+// Each child adapter is a duplicate of the parent adapter with the address of the child.
+// Its clock is the clock of the child, capped by the clock of the parent
 TEST_F(TestPCA9548APAdapter, ChildAdapter)
 {
     SCOPED_TRACE(ustr);
@@ -94,7 +96,7 @@ TEST_F(TestPCA9548APAdapter, ChildAdapter)
         auto ad = static_cast<AdapterI2C*>(child.adapter());
         EXPECT_EQ(ad->implType(), parent->implType());
         EXPECT_EQ(ad->address(), CHILD_ADDRESS);
-        EXPECT_EQ(ad->clock(), parent->clock());
+        EXPECT_EQ(ad->clock(), std::min(child.component_config().clock, parent->clock()));
     }
 }
 
