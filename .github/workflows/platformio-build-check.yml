@@ -59,7 +59,7 @@ jobs:
         unit:
           - UnitPbHub
 
-        # Reduced from 19 to 7 boards: one per compile config (ESP32 / S3 / C6 / H2 / P4) plus StickS3 and
+        # Reduced from 20 to 8 boards: one per compile config (ESP32 / S3 / C5 / C6 / H2 / P4) plus StickS3 and
         # Cardputer, which have their own build_flags. The others differ only in variant headers.
         board:
           - Core
@@ -81,6 +81,7 @@ jobs:
           - Cardputer
           - Tab5
 #          - NessoN1  # ESP32-C6: represented by NanoC6
+          - ToughC5
 
         framework:
           - Arduino

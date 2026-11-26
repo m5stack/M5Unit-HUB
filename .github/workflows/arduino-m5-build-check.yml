@@ -63,7 +63,7 @@ jobs:
         unit:
           - UnitPbHub
 
-        # Reduced from 23 to 9 boards: one per chip (ESP32 / S3 / C6 / H2 / P4) plus AtomS3R, Cardputer,
+        # Reduced from 24 to 10 boards: one per chip (ESP32 / S3 / C5 / C6 / H2 / P4) plus AtomS3R, Cardputer,
         # PaperS3 and StickS3, whose board definitions have their own build properties (PSRAM / flash mode / USB).
         # The others differ only in variant headers.
         board:
@@ -99,6 +99,7 @@ jobs:
           - m5stack_tab5
 #          - m5stack_timer_cam
 #          - m5stack_tough
+          - m5stack_toughc5
 #          - m5stack_unit_c6l
 #          - m5stack_unit_cam
 #          - m5stack_unit_cams3
