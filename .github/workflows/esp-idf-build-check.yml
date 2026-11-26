@@ -52,16 +52,18 @@ jobs:
       matrix:
         # idf boundaries: 5.1.7 = oldest legacy-driver (5.0.x dropped: M5GFX needs esp_mm added
         # in 5.1), 5.4.4 = new driver/*_master.h era, 5.5.4 = latest 5.x, 6.1 = latest 6.x.
-        # Cross instead of the full product: every chip on the latest 5.x, and the idf axis on
-        # esp32 only. The PbHub child adapter branches per driver era (ESPIDFMasterBus /
-        # ESPIDFLegacyBus), and the wiring helper per chip, so the two axes are covered separately.
+        # Every chip on the latest 5.x and the latest 6.x, and the older boundaries on esp32 only.
+        # 6.1 turns warnings into errors by default (CONFIG_COMPILER_DISABLE_DEFAULT_ERRORS = n,
+        # GCC 15, C++26), and the warnings differ per toolchain (Xtensa esp32 / esp32s3, RISC-V
+        # esp32c3 / esp32c5 / esp32c6 / esp32h2 / esp32p4), so every chip builds on it.
+        # 5.1.7 / 5.4.4 change only the driver era (the PbHub child adapter branches between
+        # ESPIDFMasterBus and ESPIDFLegacyBus), not per chip, so they stay on esp32.
         # esp32c6 x v5.1.7 is kept as the legacy driver on a single core RISC-V chip.
         target: [esp32, esp32s3, esp32c3, esp32c5, esp32c6, esp32h2, esp32p4]
-        idf: [v5.5.4]
+        idf: [v5.5.4, v6.1]
         include:
           - {target: esp32, idf: v5.1.7}    # oldest legacy driver
           - {target: esp32, idf: v5.4.4}    # first new driver era
-          - {target: esp32, idf: v6.1}      # CONFIG_COMPILER_DISABLE_DEFAULT_ERRORS defaults to n
           - {target: esp32c6, idf: v5.1.7}  # legacy driver on a single core RISC-V chip
     steps:
       - name: Checkout
