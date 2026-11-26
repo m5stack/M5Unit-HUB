@@ -147,10 +147,11 @@ class TestPbHubAdapterMasterBus : public TestPbHubAdapter {
 protected:
     virtual void SetUp() override
     {
-        // GROVE is not driven by Wire on these boards (NessoN1: SoftwareI2C, NanoC6/NanoH2: Ex_I2C)
+        // GROVE is not driven by Wire on these boards (NessoN1: SoftwareI2C, NanoC6/NanoH2: Ex_I2C,
+        // ToughC5: LP_I2C, which Wire cannot drive)
         const auto board = M5.getBoard();
         if (board == m5::board_t::board_ArduinoNessoN1 || board == m5::board_t::board_M5NanoC6 ||
-            board == m5::board_t::board_M5NanoH2) {
+            board == m5::board_t::board_M5NanoH2 || board == m5::board_t::board_M5ToughC5) {
             GTEST_SKIP() << "GROVE is not driven by Wire on this board";
         }
         TestPbHubAdapter::SetUp();
